@@ -2,19 +2,13 @@ package com.iteration.kingdomino.game
 
 import timber.log.Timber
 
-public class Player(val name : String) {
-    var score : Int = 0
+class Player(val name : String) {
     val map = Field()
 
 
-    fun computeScore() : Int
+    fun getScore() : Int
     {
-        // TODO
-        var score = 0
-
-
-
-        return 0
+        return map.calculateScore()
     }
 
     fun computeChoices(card : Card) : List<Pair<Int, Int>>
@@ -33,7 +27,7 @@ public class Player(val name : String) {
     }
 
     fun debugPlayer() {
-        Timber.d("Player $name currently has a score of $score.")
+        Timber.d("Player $name currently has a score of ${getScore()}.")
         Timber.d("Representation of their board:\n$map")
         // TODO
     }

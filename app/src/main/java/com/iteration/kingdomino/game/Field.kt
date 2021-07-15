@@ -9,6 +9,47 @@ public class Field {
         field[4][4] = Tile(Tile.Terrain.CASTLE, 0)
     }
 
+    fun calculateScore() : Int
+    {
+        val setOfDomains = HashSet<Set<Tile>>()
+        val trimmedDomain = trimmedField(field)
+        for(rowIndex in 0 until trimmedDomain.size)
+        {
+            for(colIndex in 0 until trimmedDomain[0].size)
+            {
+                if(trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.NULL && trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.CASTLE)
+                {
+                    if(setOfDomains.all { domain -> !domain.contains(trimmedDomain[rowIndex][colIndex]) }) // tile is not referenced in domains
+                    {
+                        setOfDomains.add( getDomain(rowIndex, colIndex, trimmedDomain[rowIndex][colIndex].type, trimmedDomain) )
+                    }
+                }
+            }
+        }
+
+        var score = 0
+        for(domain in setOfDomains)
+        {
+            Timber.d(domain.toString())
+            var multiplier = 0;
+            domain.forEach { tile -> multiplier += tile.crown }
+            score += multiplier * domain.size
+        }
+        Timber.d("Computed score: $score")
+        return score
+    }
+
+    private fun getDomain(rowIndex: Int, colIndex: Int, terrainType : Tile.Terrain, field : MutableList<MutableList<Tile>>): Set<Tile> {
+        val domain = HashSet<Tile>()
+        if(field[rowIndex][colIndex].type == terrainType)
+        {
+            domain.add(field[rowIndex][colIndex])
+        }
+        if(rowIndex < field.size - 1) { domain.addAll(getDomain(rowIndex+1, colIndex, terrainType, field)) } // propagate downward
+        if(colIndex < field[0].size - 1) { domain.addAll(getDomain(rowIndex, colIndex+1, terrainType, field)) } // propagate to the right
+        return domain
+    }
+
     fun addTile(t : Tile, posXY : Pair<Int, Int>)
     {
         val x = posXY.first; val y = posXY.second
@@ -82,6 +123,8 @@ public class Field {
 
         return neighbours.any { terrainType -> terrainType == type || terrainType == Tile.Terrain.CASTLE }
     }
+
+
 
 
     private fun mapAsString(field : MutableList<MutableList<Tile>>) : String
