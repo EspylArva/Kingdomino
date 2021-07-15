@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.iteration.kingdomino"
@@ -53,4 +53,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     // Gson (marshalling/unmarshalling) @ https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'com.opencsv:opencsv:5.5'
+
 }
