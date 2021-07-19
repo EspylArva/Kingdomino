@@ -4,9 +4,9 @@ import timber.log.Timber
 
 public class Field {
     // FIXME : should castle have value 0 or 1?
-    private val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, 0) } }
+    private val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
     init {
-        field[4][4] = Tile(Tile.Terrain.CASTLE, 0)
+        field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
 
     fun calculateScore() : Int
@@ -32,7 +32,7 @@ public class Field {
         {
             Timber.d(domain.toString())
             var multiplier = 0;
-            domain.forEach { tile -> multiplier += tile.crown }
+            domain.forEach { tile -> multiplier += tile.crown.value }
             score += multiplier * domain.size
         }
         Timber.d("Computed score: $score")
@@ -107,9 +107,6 @@ public class Field {
 
     private fun fieldSmallEnough(x : Int, y : Int) : Boolean {
         val futureField = fieldClone()
-        futureField[y][x] = Tile(Tile.Terrain.CASTLE, 99)
-//        Timber.d(mapAsString(field))
-//        Timber.d(mapAsString(futureField))
         val trimmed = trimmedField(futureField)
         return (trimmed.size < 6) and (trimmed[0].size < 6)
     }

@@ -8,7 +8,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
+import com.iteration.kingdomino.components.RecyclerDotIndicator
+import com.iteration.kingdomino.components.RecyclerViewMargin
+import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.csvreader.CSVReader
 import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Field
@@ -26,6 +32,8 @@ class HomeFragment : Fragment() {
     private lateinit var choice : List<Card>
     private lateinit var players : List<Player>
 
+    private lateinit var recycler_choice : RecyclerView
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -34,15 +42,19 @@ class HomeFragment : Fragment() {
         homeViewModel =
                 ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+
+        recycler_choice = root.findViewById(R.id.recycler_card_choice)
+
+//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+////            textView.text = it
+//        })
 
         players = listOf(Player("John Doe"), Player("Emily Lee"), Player("Joseph Staline"), Player("Chris Tabernacle"))
 
         deck = CSVReader().readCsv(requireContext())
         deck.shuffle()
+
+
 
         // Template data
 //        deck.add(Card(1, Tile(Tile.Terrain.FIELD, 2), Tile(Tile.Terrain.FOREST, 0)))
@@ -55,6 +67,15 @@ class HomeFragment : Fragment() {
 //        deck.add(Card(8, Tile(Tile.Terrain.MINE, 3), Tile(Tile.Terrain.FOREST, 0)))
 
         choice = drawCards()
+        recycler_choice.setHasFixedSize(true)
+        recycler_choice.adapter = CardChoiceAdapter(choice)
+        val recyclerLayout = LinearLayoutManager(requireContext())
+        recyclerLayout.orientation = LinearLayoutManager.HORIZONTAL
+        recycler_choice.layoutManager = recyclerLayout
+        // Add margin
+        recycler_choice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
+//        PagerSnapHelper().attachToRecyclerView(recycler_choice)
+
 
         debugWorld()
 

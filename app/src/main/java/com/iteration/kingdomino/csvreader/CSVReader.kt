@@ -23,7 +23,7 @@ class CSVReader
         var line: Array<String>? = csvReader.readNext()
         while (line != null) {
             // Do something with the data
-            val domino = Card(line[4].toInt(), Tile(Tile.Terrain.valueOf(line[1]), line[0].toInt()), Tile(Tile.Terrain.valueOf(line[3]), line[2].toInt()))
+            val domino = Card(line[4].toInt(), Tile(Tile.Terrain.valueOf(line[1]), Tile.Crown.valueOf(line[0])), Tile(Tile.Terrain.valueOf(line[3]), Tile.Crown.valueOf(line[2])))
             listCards.push(domino)
             line = csvReader.readNext()
         }
