@@ -25,42 +25,8 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: PlayerMapAdapter.ViewHolder, position: Int) {
-
-        /**
-         * gridLayout = (GridLayout) findViewById(R.id.gridview);
-
-        gridLayout.removeAllViews();
-
-        int total = 10;
-        int column = 3;
-        int row = total / column;
-        gridLayout.setColumnCount(column);
-        gridLayout.setRowCount(row + 1);
-        for (int i = 0, c = 0, r = 0; i < total; i++, c++) {
-        if (c == column) {
-        c = 0;
-        r++;
-        }
-        ImageView oImageView = new ImageView(this);
-        oImageView.setImageResource(R.drawable.ic_launcher);
-
-        oImageView.setLayoutParams(new LayoutParams(100, 100));
-
-        Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 1);
-        Spec colspan = GridLayout.spec(GridLayout.UNDEFINED, 1);
-        if (r == 0 && c == 0) {
-        Log.e("", "spec");
-        colspan = GridLayout.spec(GridLayout.UNDEFINED, 2);
-        rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 2);
-        }
-        GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(
-        rowSpan, colspan);
-        gridLayout.addView(oImageView, gridParam);
-
-
-        }
-         */
-        val field = players[position].map.field//.trimmedField()
+        val field = players[position].map.field
+//        val field = players[position].map.trimmedField()
 
         holder.playerMap.removeAllViews()
         val rows = field.size
@@ -68,12 +34,14 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
 
         holder.playerMap.rowCount = rows
         holder.playerMap.columnCount = columns
+//        holder.playerMap.alignmentMode = GridLayout.ALIGN_MARGINS
 
         val metrics = DisplayMetrics()
         holder.itemView.context.display?.getRealMetrics(metrics)
 
-        val size = (metrics.widthPixels * 0.2).toInt()
+        val size = (metrics.widthPixels * 0.1).toInt()
         Timber.d("Tile size for map: $size")
+        Timber.d("Field size for player ${players[position].name}: $rows x $columns")
 
 
         for(row in 0 until field.size)
@@ -83,18 +51,23 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
                 val iv = ImageView(holder.itemView.context)
                 var drawableId = field[row][col].type.drawableId
                 if(drawableId == 0) { drawableId = R.drawable.ic_castle_blue }
+
                 iv.setImageResource(drawableId)
+                iv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
-                val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                lp.width = size; lp.height = size
-                iv.layoutParams = lp
+                val gridParam = GridLayout.LayoutParams()
+                gridParam.height = size
+                gridParam.width = size
+                gridParam.columnSpec = GridLayout.spec(col)
+                gridParam.rowSpec = GridLayout.spec(row)
+                gridParam.setMargins(1,1,1,1)
 
-                val gridParam = GridLayout.LayoutParams(GridLayout.spec(GridLayout.UNDEFINED, 1f), GridLayout.spec(GridLayout.UNDEFINED, 1f))
                 holder.playerMap.addView(iv, gridParam)
+//                ll.addView(iv)
+//                holder.playerMap.addView(ll, gridParam)
 
-//                iv.requestLayout()
-//                holder.playerMap.requestLayout()
-//                holder.itemView.requestLayout()
+                iv.setOnClickListener { Timber.d("Clicked on $row x $col: ${field[row][col]}") }
+
             }
         }
     }

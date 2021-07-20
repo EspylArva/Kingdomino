@@ -92,11 +92,6 @@ class HomeFragment : Fragment() {
         recycler_maps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
         // Add margin
 
-
-
-//         3 0
-//         0 0
-
 //        try{
 //            players[0].map.addTile(choice[0].tile1, Pair(5,2)) // PlayerFieldException: Impossible to add this tile to the player field: given x index was 5; should be between 0 and 2
 //        }

@@ -10,16 +10,17 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerDotIndicator(@ColorInt private val colorActive : Int, @ColorInt private val colorInactive : Int) : RecyclerView.ItemDecoration() {
+class RecyclerLineIndicator(@ColorInt private val colorActive : Int, @ColorInt private val colorInactive : Int) : RecyclerView.ItemDecoration() {
     private val dp = Resources.getSystem().displayMetrics.density
     private val indicatorHeight = (dp*16).toInt()
-    private val indicatorStrokeWidth = (dp*4)
-    private val indicatorItemLength = (dp*4)
-    private val indicatorItemPadding = (dp*8)
+    private val indicatorStrokeWidth = (dp*2)
+    private val indicatorItemLength = (dp*16)
+    private val indicatorItemPadding = (dp*4)
     private val interpolator = AccelerateDecelerateInterpolator()
     private val paint = Paint()
 
     init {
+        paint.strokeCap = Paint.Cap.ROUND
         paint.strokeWidth = indicatorStrokeWidth
         paint.style = Paint.Style.STROKE
         paint.isAntiAlias = true
@@ -56,7 +57,7 @@ class RecyclerDotIndicator(@ColorInt private val colorActive : Int, @ColorInt pr
         val itemWidth = indicatorItemLength + indicatorItemPadding
         var start = indicatorStartX
         for(i in 0 until itemCount) {
-            c.drawCircle(start, indicatorPosY, indicatorItemLength/2F, paint)
+            c.drawLine(start, indicatorPosY, start + indicatorItemLength, indicatorPosY, paint)
             start += itemWidth
         }
 
@@ -68,12 +69,17 @@ class RecyclerDotIndicator(@ColorInt private val colorActive : Int, @ColorInt pr
         var highlightStart = indicatorStartX + itemWidth * activePosition
         if( progress == 0F)
         {
-            c.drawCircle(highlightStart, indicatorPosY, indicatorItemLength/2F, paint)
+            c.drawLine(highlightStart, indicatorPosY, highlightStart + indicatorItemLength, indicatorPosY, paint)
         }
         else
         {
             val partialLength = indicatorItemLength * progress
-            c.drawCircle(highlightStart + partialLength, indicatorPosY, indicatorItemLength/2F, paint)
+            c.drawLine(highlightStart + partialLength, indicatorPosY, highlightStart + indicatorItemLength, indicatorPosY, paint)
+
+            if(activePosition < itemCount - 1) {
+                highlightStart += itemWidth
+                c.drawLine(highlightStart, indicatorPosY, highlightStart + partialLength, indicatorPosY, paint)
+            }
         }
 
     }
@@ -82,4 +88,5 @@ class RecyclerDotIndicator(@ColorInt private val colorActive : Int, @ColorInt pr
         super.getItemOffsets(outRect, view, parent, state)
         outRect.bottom = indicatorHeight
     }
+
 }
