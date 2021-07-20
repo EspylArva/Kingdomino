@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
@@ -41,34 +42,18 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
         Timber.d("Metrics: ${metrics.heightPixels} -- Tile size: $size")
         setCardSize(holder, size)
 
-        holder.imgCrowns1.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
-        holder.imgType1.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
+        holder.clFirst.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
+//        holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
 
-        holder.imgCrowns2.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
-        holder.imgType2.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
+        holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
+//        holder.imgType2.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
 
     }
 
     private fun setCardSize(holder: ViewHolder, size: Int) {
-        holder.imgCrowns1.layoutParams.width = size
-        holder.imgCrowns1.requestLayout()
-        holder.imgCrowns1.layoutParams.height = size
-        holder.imgCrowns1.requestLayout()
-
-        holder.imgType1.layoutParams.width = size
-        holder.imgType1.requestLayout()
-        holder.imgType1.layoutParams.height = size
-        holder.imgType1.requestLayout()
-
-        holder.imgCrowns2.layoutParams.width = size
-        holder.imgCrowns2.requestLayout()
-        holder.imgCrowns2.layoutParams.height = size
-        holder.imgCrowns2.requestLayout()
-
-        holder.imgType2.layoutParams.width = size
-        holder.imgType2.requestLayout()
-        holder.imgType2.layoutParams.height = size
-        holder.imgType2.requestLayout()
+        holder.clFirst.layoutParams.width  = size; holder.clFirst.layoutParams.height  = size
+        holder.clSecond.layoutParams.width = size; holder.clSecond.layoutParams.height = size
+        holder.clSecond.requestLayout()
     }
 
     private fun setBackground(iv : ImageView, drawableId : Int) {
@@ -82,6 +67,9 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
+        val clFirst : ConstraintLayout = itemView.findViewById(R.id.card_first_tile)
+        val clSecond : ConstraintLayout = itemView.findViewById(R.id.card_second_tile)
+
         val imgCrowns1 : ImageView = itemView.findViewById(R.id.img_card_crowns_one)
         val imgCrowns2 : ImageView = itemView.findViewById(R.id.img_card_crowns_two)
         val imgType1 : ImageView = itemView.findViewById(R.id.img_card_type_one)
