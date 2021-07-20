@@ -7,7 +7,7 @@ class Utils
     companion object{
         fun pxToDp(px: Int, context: Context) : Int
         {
-            val scale = context.getResources().getDisplayMetrics().density;
+            val scale = context.resources.displayMetrics.density;
             return (px * scale + 0.5f).toInt()
         }
     }

@@ -14,8 +14,8 @@ import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
 import timber.log.Timber
 
-class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardChoiceAdapter.ViewHolder {
+class CardChoiceAdapter(private val cards : MutableList<Card>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
     }
@@ -24,7 +24,7 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
         return cards.size;
     }
 
-    override fun onBindViewHolder(holder: CardChoiceAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         setBackground(holder.imgCrowns1, cards[position].tile1.crown.drawableId)
         setBackground(holder.imgType1, cards[position].tile1.type.drawableId)
         setBackground(holder.imgCrowns2, cards[position].tile2.crown.drawableId)
@@ -34,7 +34,6 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
         holder.itemView.context.display?.getRealMetrics(metrics)
 
         val size = (metrics.widthPixels * 0.2).toInt()
-        Timber.d("Metrics: ${metrics.heightPixels} -- Tile size: $size")
         setCardSize(holder, size)
 
         holder.clFirst.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }

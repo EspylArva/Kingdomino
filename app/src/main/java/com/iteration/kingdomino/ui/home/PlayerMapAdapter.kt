@@ -11,11 +11,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
+import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
 
 
 class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerMapAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
     }
@@ -34,14 +35,11 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
 
         holder.playerMap.rowCount = rows
         holder.playerMap.columnCount = columns
-//        holder.playerMap.alignmentMode = GridLayout.ALIGN_MARGINS
 
         val metrics = DisplayMetrics()
         holder.itemView.context.display?.getRealMetrics(metrics)
 
         val size = (metrics.widthPixels * 0.1).toInt()
-        Timber.d("Tile size for map: $size")
-        Timber.d("Field size for player ${players[position].name}: $rows x $columns")
 
 
         for(row in 0 until field.size)
@@ -50,7 +48,7 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
             {
                 val iv = ImageView(holder.itemView.context)
                 var drawableId = field[row][col].type.drawableId
-                if(drawableId == 0) { drawableId = R.drawable.ic_castle_blue }
+                if(drawableId == 0) { drawableId = Tile.CASTLES[position] }
 
                 iv.setImageResource(drawableId)
                 iv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -63,29 +61,12 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
                 gridParam.setMargins(1,1,1,1)
 
                 holder.playerMap.addView(iv, gridParam)
-//                ll.addView(iv)
-//                holder.playerMap.addView(ll, gridParam)
 
                 iv.setOnClickListener { Timber.d("Clicked on $row x $col: ${field[row][col]}") }
 
             }
         }
     }
-
-    private fun setCardSize(holder: ViewHolder, size: Int) {
-//        holder.clFirst.layoutParams.width  = size; holder.clFirst.layoutParams.height  = size
-//        holder.clSecond.layoutParams.width = size; holder.clSecond.layoutParams.height = size
-//        holder.clSecond.requestLayout()
-    }
-
-    private fun setBackground(iv : ImageView, drawableId : Int) {
-        if (drawableId != 0) {
-            iv.background = ResourcesCompat.getDrawable(iv.resources, drawableId, null)
-        }
-    }
-
-
-
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {

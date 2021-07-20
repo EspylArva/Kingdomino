@@ -5,6 +5,10 @@ import com.iteration.kingdomino.R
 
 data class Tile(val type : Terrain, val crown : Crown) {
 
+    companion object
+    {
+        val CASTLES = listOf(R.drawable.ic_castle_red, R.drawable.ic_castle_blue, R.drawable.ic_castle_orange, R.drawable.ic_castle_green)
+    }
     override fun toString() = "[$type ($crown)]"
 
 
