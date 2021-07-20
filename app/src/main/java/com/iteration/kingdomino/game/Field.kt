@@ -4,7 +4,7 @@ import timber.log.Timber
 
 public class Field {
     // FIXME : should castle have value 0 or 1?
-    private val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
+    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
     init {
         field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
@@ -90,6 +90,8 @@ public class Field {
         }
         return trimmedField
     }
+
+    fun trimmedField() = trimmedField(field)
 
     private fun fieldClone(): MutableList<MutableList<Tile>> {
 //        val clone = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, 0) } }

@@ -33,6 +33,7 @@ class HomeFragment : Fragment() {
     private lateinit var players : List<Player>
 
     private lateinit var recycler_choice : RecyclerView
+    private lateinit var recycler_maps : RecyclerView
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -44,6 +45,7 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
         recycler_choice = root.findViewById(R.id.recycler_card_choice)
+        recycler_maps = root.findViewById(R.id.recycler_player_field)
 
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
 ////            textView.text = it
@@ -74,13 +76,21 @@ class HomeFragment : Fragment() {
         recycler_choice.layoutManager = recyclerLayout
         // Add margin
         recycler_choice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
-//        PagerSnapHelper().attachToRecyclerView(recycler_choice)
 
 
         debugWorld()
 
         players[0].map.addTile(choice[0].tile1, Pair(3,4))
         players[0].debugPlayer()
+
+        recycler_maps.setHasFixedSize(true)
+        recycler_maps.adapter = PlayerMapAdapter(players)
+        val recyclerLayout2 = LinearLayoutManager(requireContext())
+        recyclerLayout2.orientation = LinearLayoutManager.HORIZONTAL
+        recycler_maps.layoutManager = recyclerLayout2
+        PagerSnapHelper().attachToRecyclerView(recycler_maps)
+        recycler_maps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
+        // Add margin
 
 
 

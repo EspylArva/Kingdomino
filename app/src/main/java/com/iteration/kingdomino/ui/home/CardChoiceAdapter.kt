@@ -17,7 +17,7 @@ import timber.log.Timber
 class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardChoiceAdapter.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.card_choice, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -25,11 +25,6 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
     }
 
     override fun onBindViewHolder(holder: CardChoiceAdapter.ViewHolder, position: Int) {
-//        TODO("Not yet implemented")
-        //
-
-        Timber.d(cards[position].toString())
-
         setBackground(holder.imgCrowns1, cards[position].tile1.crown.drawableId)
         setBackground(holder.imgType1, cards[position].tile1.type.drawableId)
         setBackground(holder.imgCrowns2, cards[position].tile2.crown.drawableId)
@@ -43,11 +38,7 @@ class CardChoiceAdapter(private val cards : List<Card>) : RecyclerView.Adapter<C
         setCardSize(holder, size)
 
         holder.clFirst.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
-//        holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
-
         holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
-//        holder.imgType2.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
-
     }
 
     private fun setCardSize(holder: ViewHolder, size: Int) {
