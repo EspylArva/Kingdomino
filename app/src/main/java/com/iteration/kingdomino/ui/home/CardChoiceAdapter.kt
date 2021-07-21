@@ -36,8 +36,21 @@ class CardChoiceAdapter(private val cards : MutableList<Card>) : RecyclerView.Ad
         val size = (metrics.widthPixels * 0.2).toInt()
         setCardSize(holder, size)
 
-        holder.clFirst.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
-        holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
+//        holder.clFirst.setOnClickListener { Timber.d("Touched ${cards[position].tile1.type} holding ${cards[position].tile1.crown} crowns") }
+//        holder.clSecond.setOnClickListener { Timber.d("Touched ${cards[position].tile2.type} holding ${cards[position].tile2.crown} crowns") }
+
+
+        holder.itemView.setOnClickListener {
+            // highlight selection
+//            for(i in 0..3)
+//            {
+//                if(i != position)
+//                {
+//
+//                }
+//            }
+
+        }
     }
 
     private fun setCardSize(holder: ViewHolder, size: Int) {
