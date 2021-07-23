@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -21,8 +19,6 @@ import com.iteration.kingdomino.csvreader.CSVReader
 import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Field
 import com.iteration.kingdomino.game.Player
-import com.iteration.kingdomino.game.Tile
-import org.w3c.dom.Text
 import timber.log.Timber
 import java.util.*
 import kotlin.Exception
@@ -35,9 +31,9 @@ class HomeFragment : Fragment() {
     private var choice = mutableListOf<Card>()
     private lateinit var players : List<Player>
 
-    private lateinit var recycler_choice : RecyclerView
-    private lateinit var recycler_maps : RecyclerView
-    private lateinit var cl_header : ConstraintLayout
+    private lateinit var recyclerChoice : RecyclerView  // Available cards
+    private lateinit var recyclerMaps : RecyclerView    // Players' field
+    private lateinit var clHeader : ConstraintLayout    // Header with scores
 
 
     override fun onCreateView(
@@ -63,7 +59,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setListeners() {
-        cl_header.setOnClickListener {
+        clHeader.setOnClickListener {
             if(deck.size < 5)
             {
                 Toast.makeText(requireContext(), "Empty deck! Shuffling...", Toast.LENGTH_SHORT).show()
@@ -74,7 +70,7 @@ class HomeFragment : Fragment() {
             choice.clear()
             choice.addAll(drawCards())
             Timber.d("$choice")
-            recycler_choice.adapter!!.notifyDataSetChanged()
+            recyclerChoice.adapter!!.notifyDataSetChanged()
             Toast.makeText(requireContext(), "Clicked the information, refreshing choice deck", Toast.LENGTH_SHORT).show()
         }
     }
@@ -84,24 +80,24 @@ class HomeFragment : Fragment() {
 
     private fun initViews(inflater: LayoutInflater, container: ViewGroup?): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        recycler_choice = root.findViewById(R.id.recycler_card_choice)
-        recycler_maps = root.findViewById(R.id.recycler_player_field)
-        cl_header = root.findViewById(R.id.cl_player_info)
+        recyclerChoice = root.findViewById(R.id.recycler_card_choice)
+        recyclerMaps = root.findViewById(R.id.recycler_player_field)
+        clHeader = root.findViewById(R.id.cl_player_info)
 
-        recycler_choice.setHasFixedSize(true)
-        recycler_choice.adapter = CardChoiceAdapter(choice)
+        recyclerChoice.setHasFixedSize(true)
+        recyclerChoice.adapter = CardChoiceAdapter(choice)
         val recyclerLayout = LinearLayoutManager(requireContext())
         recyclerLayout.orientation = LinearLayoutManager.HORIZONTAL
-        recycler_choice.layoutManager = recyclerLayout
-        recycler_choice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
+        recyclerChoice.layoutManager = recyclerLayout
+        recyclerChoice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
 
-        recycler_maps.setHasFixedSize(true)
-        recycler_maps.adapter = PlayerMapAdapter(players, this)
+        recyclerMaps.setHasFixedSize(true)
+        recyclerMaps.adapter = PlayerMapAdapter(players, this)
         val recyclerLayout2 = LinearLayoutManager(requireContext())
         recyclerLayout2.orientation = LinearLayoutManager.HORIZONTAL
-        recycler_maps.layoutManager = recyclerLayout2
-        PagerSnapHelper().attachToRecyclerView(recycler_maps)
-        recycler_maps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
+        recyclerMaps.layoutManager = recyclerLayout2
+        PagerSnapHelper().attachToRecyclerView(recyclerMaps)
+        recyclerMaps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
 
         return root
     }
@@ -121,7 +117,7 @@ class HomeFragment : Fragment() {
         try {
             // Play tile
             players[playerPosition].map.addTile(choice[0].tile1, position)
-            recycler_maps.adapter!!.notifyItemChanged(playerPosition)
+            recyclerMaps.adapter!!.notifyItemChanged(playerPosition)
 
             // Refresh score
             // TODO
