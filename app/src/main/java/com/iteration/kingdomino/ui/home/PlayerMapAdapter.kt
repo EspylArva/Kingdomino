@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
@@ -15,7 +16,7 @@ import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
 
 
-class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
+class PlayerMapAdapter(private val players : List<Player>, private val gameFragment : HomeFragment) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
@@ -46,23 +47,39 @@ class PlayerMapAdapter(private val players : List<Player>) : RecyclerView.Adapte
         {
             for(col in 0 until field[row].size)
             {
-                val iv = ImageView(holder.itemView.context)
-                var drawableId = field[row][col].type.drawableId
-                if(drawableId == 0) { drawableId = Tile.CASTLES[position] }
+                val clTile = ConstraintLayout(holder.itemView.context)
+                val ivType = ImageView(holder.itemView.context); val ivCrown = ImageView(holder.itemView.context)
 
-                iv.setImageResource(drawableId)
-                iv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                // Get the drawables
+                var typeDrawableId = field[row][col].type.drawableId; val crownDrawableId = field[row][col].crown.drawableId
+                if(typeDrawableId == 0) { typeDrawableId = Tile.CASTLES[position] }
+                // Set the drawables (if needed)
+                if(crownDrawableId != 0) { ivCrown.setImageResource(crownDrawableId) }
+                ivType.setImageResource(typeDrawableId)
 
+                // Set layout parameters: parent layout should wrap content, as it will be resized later anyways
+                // ImageViews should match parent to fill the map tile
+                clTile.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                ivType.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+                ivCrown.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+
+                // Grid cell layout parameters
                 val gridParam = GridLayout.LayoutParams()
-                gridParam.height = size
-                gridParam.width = size
-                gridParam.columnSpec = GridLayout.spec(col)
-                gridParam.rowSpec = GridLayout.spec(row)
-                gridParam.setMargins(1,1,1,1)
+                gridParam.height = size; gridParam.width = size // Square dimensions
+                gridParam.columnSpec = GridLayout.spec(col); gridParam.rowSpec = GridLayout.spec(row) // Set position in the grid; no weight attributed, because we don't want the cell to fill the space
+                gridParam.setMargins(1,1,1,1) // Margins for display purposes
 
-                holder.playerMap.addView(iv, gridParam)
+                // Add the ImageViews to the parent layout, and add it to the grid layout
+                clTile.addView(ivType)
+                clTile.addView(ivCrown)
+                holder.playerMap.addView(clTile, gridParam)
 
-                iv.setOnClickListener { Timber.d("Clicked on $row x $col: ${field[row][col]}") }
+
+                // OnClickListener
+                clTile.setOnClickListener {
+                    Timber.d("Clicked on $row x $col: ${field[row][col]}")
+                    gameFragment.playTile( position, Pair(row, col))
+                }
 
             }
         }

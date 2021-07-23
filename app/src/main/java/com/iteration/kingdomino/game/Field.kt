@@ -13,14 +13,10 @@ public class Field {
     {
         val setOfDomains = HashSet<Set<Tile>>()
         val trimmedDomain = trimmedField(field)
-        for(rowIndex in 0 until trimmedDomain.size)
-        {
-            for(colIndex in 0 until trimmedDomain[0].size)
-            {
-                if(trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.NULL && trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.CASTLE)
-                {
-                    if(setOfDomains.all { domain -> !domain.contains(trimmedDomain[rowIndex][colIndex]) }) // tile is not referenced in domains
-                    {
+        for(rowIndex in 0 until trimmedDomain.size) {
+            for(colIndex in 0 until trimmedDomain[0].size) {
+                if(trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.NULL && trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.CASTLE) {
+                    if(setOfDomains.all { domain -> !domain.contains(trimmedDomain[rowIndex][colIndex]) }) {// tile is not referenced in domains
                         setOfDomains.add( getDomain(rowIndex, colIndex, trimmedDomain[rowIndex][colIndex].type, trimmedDomain) )
                     }
                 }
@@ -56,15 +52,13 @@ public class Field {
 
         if(x < 0 || x > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given x index was $x; should be between 0 and 8") }
         if(y < 0 || y > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given y index was $y; should be between 0 and 8") }
-        if(field[y][x].type != Tile.Terrain.NULL) throw PlayerFieldException("Impossible to add this tile: target is not an empty tile")
+        if(field[x][y].type != Tile.Terrain.NULL) throw PlayerFieldException("Impossible to add this tile: target is not an empty tile")
         else {
             if(fieldSmallEnough(x, y))
             {
-                Timber.d("Valid neighbour: ${validNeighbour(x, y, t.type)}")
-                if(validNeighbour(x, y, t.type)) // at least one neighbour of XY is valid
-                {
-                    field[y][x] = t
-
+                if(validNeighbour(x, y, t.type)) {// at least one neighbour of XY is valid
+                    field[x][y] = t
+                    Timber.d("Success playing tile $t at $posXY")
                 }
                 else { throw PlayerFieldException("Invalid movement: no valid neighbour has been found near this position.") }
             }
@@ -75,16 +69,11 @@ public class Field {
     private fun trimmedField(field : MutableList<MutableList<Tile>>) : MutableList<MutableList<Tile>>
     {
         val trimmedField = fieldClone() // clone the field
-        for(i in 8 downTo 0)
-        {
-//            Timber.d("Scanning row $i || ${field[i]} : ${field[i].all { tile -> tile.type == Tile.Terrain.NULL }}")
-            if(field[i].all { tile -> tile.type == Tile.Terrain.NULL })
-            {
+        for(i in 8 downTo 0) {
+            if(field[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
                 trimmedField.removeAt(i)
             }
-//            Timber.d("Scanning col $i || ${List(trimmedField[0].size) {it -> field[it][i]}} : ${field.all { row -> row[i].type == Tile.Terrain.NULL }}")
-            if(field.all { row -> row[i].type == Tile.Terrain.NULL })
-            {
+            if(field.all { row -> row[i].type == Tile.Terrain.NULL }) {
                 trimmedField.forEach { row -> row.removeAt(i) }
             }
         }
@@ -94,31 +83,22 @@ public class Field {
     fun trimmedField() = trimmedField(field)
 
     private fun fieldClone(): MutableList<MutableList<Tile>> {
-//        val clone = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, 0) } }
-//        for(i in 0..8)
-//        {
-//            for(j in 0..8)
-//            {
-//                val t = field[j][i]
-//                clone[j][i] = t.copy()
-//            }
-//        }
-//        return clone
         return field.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
     }
 
     private fun fieldSmallEnough(x : Int, y : Int) : Boolean {
         val futureField = fieldClone()
+        futureField[x][y] = Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE)
         val trimmed = trimmedField(futureField)
         return (trimmed.size < 6) and (trimmed[0].size < 6)
     }
 
     private fun validNeighbour(x : Int, y : Int, type : Tile.Terrain) : Boolean {
         val neighbours = HashSet<Tile.Terrain>()
-        if(y > 0) neighbours.add(field[y-1][x].type)
-        if(y < 8) neighbours.add(field[y+1][x].type)
-        if(x > 0) neighbours.add(field[y][x-1].type)
-        if(x < 8) neighbours.add(field[y][x+1].type)
+        if(y > 0) neighbours.add(field[x][y-1].type)
+        if(y < 8) neighbours.add(field[x][y+1].type)
+        if(x > 0) neighbours.add(field[x-1][y].type)
+        if(x < 8) neighbours.add(field[x+1][y].type)
 
         return neighbours.any { terrainType -> terrainType == type || terrainType == Tile.Terrain.CASTLE }
     }

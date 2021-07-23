@@ -63,6 +63,10 @@ class CardChoiceAdapter(private val cards : MutableList<Card>) : RecyclerView.Ad
         if (drawableId != 0) {
             iv.background = ResourcesCompat.getDrawable(iv.resources, drawableId, null)
         }
+        else
+        {
+            iv.background = null
+        }
     }
 
 

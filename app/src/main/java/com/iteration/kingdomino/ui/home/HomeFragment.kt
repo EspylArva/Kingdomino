@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -36,7 +37,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var recycler_choice : RecyclerView
     private lateinit var recycler_maps : RecyclerView
-    private lateinit var lbl_infos : TextView
+    private lateinit var cl_header : ConstraintLayout
 
 
     override fun onCreateView(
@@ -56,69 +57,25 @@ class HomeFragment : Fragment() {
         setListeners()
         setObservers()
 
-
-
-
-//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-////            textView.text = it
-//        })
-
-
-
-
-
-        // Template data
-//        deck.add(Card(1, Tile(Tile.Terrain.FIELD, 2), Tile(Tile.Terrain.FOREST, 0)))
-//        deck.add(Card(2, Tile(Tile.Terrain.FIELD, 1), Tile(Tile.Terrain.FOREST, 1)))
-//        deck.add(Card(3, Tile(Tile.Terrain.FIELD, 1), Tile(Tile.Terrain.PLAIN, 2)))
-//        deck.add(Card(4, Tile(Tile.Terrain.SEA, 2), Tile(Tile.Terrain.PLAIN, 0)))
-//        deck.add(Card(5, Tile(Tile.Terrain.SEA, 1), Tile(Tile.Terrain.FOREST, 0)))
-//        deck.add(Card(6, Tile(Tile.Terrain.SEA, 0), Tile(Tile.Terrain.FIELD, 1)))
-//        deck.add(Card(7, Tile(Tile.Terrain.MINE, 2), Tile(Tile.Terrain.FIELD, 1)))
-//        deck.add(Card(8, Tile(Tile.Terrain.MINE, 3), Tile(Tile.Terrain.FOREST, 0)))
-
-
-
         debugWorld()
-
-        players[0].map.addTile(choice[0].tile1, Pair(3,4))
-        players[0].debugPlayer()
-
-        // Add margin
-
-//        try{
-//            players[0].map.addTile(choice[0].tile1, Pair(5,2)) // PlayerFieldException: Impossible to add this tile to the player field: given x index was 5; should be between 0 and 2
-//        }
-//        catch(e : Field.PlayerFieldException) {Timber.e(e)}
-//        try {
-//            players[0].map.addTile(choice[0].tile2, Pair(0,3)) // PlayerFieldException: Impossible to add this tile to the player field: given y index was 3; should be between 0 and 2
-//        }
-//        catch(e : Field.PlayerFieldException) {Timber.e(e)}
-
-//        players[0].map.addTile(choice[0].tile2, Pair(2,2))
-//        players[0].debugPlayer()
-//
-//        val test = mutableListOf(0, 1)
-//        test.add(2, 56)
-//        Timber.d(test.toString())
-//
-//
-//        players[0].map.addTile(choice[1].tile1, Pair(3,2))
-//        players[0].debugPlayer()
-
-
-
-
 
         return root
     }
 
     private fun setListeners() {
-        lbl_infos.setOnClickListener {
-            Toast.makeText(requireContext(), "Clicked the information, refreshing choice deck", Toast.LENGTH_SHORT).show()
+        cl_header.setOnClickListener {
+            if(deck.size < 5)
+            {
+                Toast.makeText(requireContext(), "Empty deck! Shuffling...", Toast.LENGTH_SHORT).show()
+                deck = CSVReader().readCsv(requireContext())
+                deck.shuffle()
+            }
+            Timber.d("$choice")
             choice.clear()
             choice.addAll(drawCards())
+            Timber.d("$choice")
             recycler_choice.adapter!!.notifyDataSetChanged()
+            Toast.makeText(requireContext(), "Clicked the information, refreshing choice deck", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -129,7 +86,7 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         recycler_choice = root.findViewById(R.id.recycler_card_choice)
         recycler_maps = root.findViewById(R.id.recycler_player_field)
-        lbl_infos = root.findViewById(R.id.lbl_infos)
+        cl_header = root.findViewById(R.id.cl_player_info)
 
         recycler_choice.setHasFixedSize(true)
         recycler_choice.adapter = CardChoiceAdapter(choice)
@@ -139,7 +96,7 @@ class HomeFragment : Fragment() {
         recycler_choice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
 
         recycler_maps.setHasFixedSize(true)
-        recycler_maps.adapter = PlayerMapAdapter(players)
+        recycler_maps.adapter = PlayerMapAdapter(players, this)
         val recyclerLayout2 = LinearLayoutManager(requireContext())
         recyclerLayout2.orientation = LinearLayoutManager.HORIZONTAL
         recycler_maps.layoutManager = recyclerLayout2
@@ -157,6 +114,18 @@ class HomeFragment : Fragment() {
             choice.add(deck.pop())
         }
         return choice
+    }
+
+    fun playTile(playerPosition : Int, position : Pair<Int, Int>)
+    {
+        try {
+            // Play tile
+            players[playerPosition].map.addTile(choice[0].tile1, position)
+            recycler_maps.adapter!!.notifyItemChanged(playerPosition)
+
+            // Refresh score
+            // TODO
+        } catch (e : Field.PlayerFieldException) { Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show() }
     }
 
     fun debugWorld()
