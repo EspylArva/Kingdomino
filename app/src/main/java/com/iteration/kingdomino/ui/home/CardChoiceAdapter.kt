@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LiveData
@@ -26,6 +27,8 @@ class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : Recyc
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.lblId.text = cards.value!![position].id.toString()
+
         setBackground(holder.imgCrowns1, cards.value!![position].tile1.crown.drawableId)
         setBackground(holder.imgType1, cards.value!![position].tile1.type.drawableId)
         setBackground(holder.imgCrowns2, cards.value!![position].tile2.crown.drawableId)
@@ -71,6 +74,8 @@ class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : Recyc
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
+        val lblId : TextView = itemView.findViewById(R.id.lbl_card_id)
+
         val clFirst : ConstraintLayout = itemView.findViewById(R.id.card_first_tile)
         val clSecond : ConstraintLayout = itemView.findViewById(R.id.card_second_tile)
 

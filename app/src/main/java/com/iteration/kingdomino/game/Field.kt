@@ -31,12 +31,14 @@ public class Field {
             domain.forEach { tile -> multiplier += tile.crown.value }
             score += multiplier * domain.size
         }
-        Timber.d("Computed score: $score")
+        Timber.e("Computed score: $score")
+        Timber.e("Domains: $setOfDomains")
         return score
     }
 
     private fun getDomain(rowIndex: Int, colIndex: Int, terrainType : Tile.Terrain, field : MutableList<MutableList<Tile>>): Set<Tile> {
         val domain = HashSet<Tile>()
+//        val domain = HashSet<Tile>()
         if(field[rowIndex][colIndex].type == terrainType)
         {
             domain.add(field[rowIndex][colIndex])

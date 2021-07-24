@@ -39,6 +39,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         {
             newDraw.add(deck.pop())
         }
+        newDraw.sort()
 //        _choice.value!!.clear()
         _choice.value = newDraw
     }
