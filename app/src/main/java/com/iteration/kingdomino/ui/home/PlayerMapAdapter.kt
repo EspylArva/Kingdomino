@@ -26,7 +26,7 @@ class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val
         return players.value!!.size
     }
 
-    override fun onBindViewHolder(holder: PlayerMapAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val field = players.value!![position].map.field
 
         holder.playerMap.removeAllViews()

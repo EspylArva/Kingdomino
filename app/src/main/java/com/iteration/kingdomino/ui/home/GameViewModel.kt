@@ -10,6 +10,7 @@ import com.iteration.kingdomino.csvreader.CSVReader
 import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Field
 import com.iteration.kingdomino.game.Player
+import timber.log.Timber
 import java.util.*
 
 class GameViewModel(val app : Application) : AndroidViewModel(app) {
@@ -60,9 +61,19 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         } catch (e : Field.PlayerFieldException) { Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show() }
     }
 
-
-
-
+    fun debugWorld()
+    {
+        Timber.e("======== Common =========")
+        Timber.d("Current deck: $deck")
+        Timber.d("Current choice: $choice")
+        Timber.e("=========================")
+        Timber.e("======== Players ========")
+        for(p in _players.value!!)
+        {
+            p.debugPlayer()
+        }
+        Timber.e("=========================")
+    }
 
     class DeckSizeException(message : String) : Exception(message)
 }

@@ -100,26 +100,10 @@ class GameFragment : Fragment() {
         PagerSnapHelper().attachToRecyclerView(recyclerMaps)
         recyclerMaps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
 
+        for(i in 0..3) {
+            clHeader.listPlayerInfo[i].first.text = vm.players.value!![i].name
+        }
+
         return root
     }
-
-
-
-
-
-//    fun debugWorld()
-//    {
-//        Timber.e("======== Common =========")
-//        Timber.d("Current deck: $deck")
-//        Timber.d("Current choice: $choice")
-//        Timber.e("=========================")
-//        Timber.e("======== Players ========")
-//        for(p in players)
-//        {
-//            p.debugPlayer()
-//        }
-//        Timber.e("=========================")
-//    }
-
-
 }
