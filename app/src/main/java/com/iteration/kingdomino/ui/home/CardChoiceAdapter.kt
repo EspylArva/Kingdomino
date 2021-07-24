@@ -9,26 +9,27 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
 import timber.log.Timber
 
-class CardChoiceAdapter(private val cards : MutableList<Card>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
+class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
     }
 
     override fun getItemCount(): Int {
-        return cards.size;
+        return cards.value!!.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        setBackground(holder.imgCrowns1, cards[position].tile1.crown.drawableId)
-        setBackground(holder.imgType1, cards[position].tile1.type.drawableId)
-        setBackground(holder.imgCrowns2, cards[position].tile2.crown.drawableId)
-        setBackground(holder.imgType2, cards[position].tile2.type.drawableId)
+        setBackground(holder.imgCrowns1, cards.value!![position].tile1.crown.drawableId)
+        setBackground(holder.imgType1, cards.value!![position].tile1.type.drawableId)
+        setBackground(holder.imgCrowns2, cards.value!![position].tile2.crown.drawableId)
+        setBackground(holder.imgType2, cards.value!![position].tile2.type.drawableId)
 
         val metrics = DisplayMetrics()
         holder.itemView.context.display?.getRealMetrics(metrics)

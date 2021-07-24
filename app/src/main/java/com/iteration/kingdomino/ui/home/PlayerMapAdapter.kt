@@ -8,7 +8,7 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
@@ -16,19 +16,18 @@ import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
 
 
-class PlayerMapAdapter(private val players : List<Player>, private val gameFragment : HomeFragment) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
+class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val vm : GameViewModel) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
     }
 
     override fun getItemCount(): Int {
-        return players.size;
+        return players.value!!.size
     }
 
     override fun onBindViewHolder(holder: PlayerMapAdapter.ViewHolder, position: Int) {
-        val field = players[position].map.field
-//        val field = players[position].map.trimmedField()
+        val field = players.value!![position].map.field
 
         holder.playerMap.removeAllViews()
         val rows = field.size
@@ -78,7 +77,7 @@ class PlayerMapAdapter(private val players : List<Player>, private val gameFragm
                 // OnClickListener
                 clTile.setOnClickListener {
                     Timber.d("Clicked on $row x $col: ${field[row][col]}")
-                    gameFragment.playTile( position, Pair(row, col))
+                    vm.playTile( position, Pair(row, col))
                 }
 
             }
