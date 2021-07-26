@@ -53,12 +53,8 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     fun playTile(playerPosition : Int, position : Pair<Int, Int>)
     {
         try {
-            // Play tile
             _players.value!![playerPosition].map.addTile(choice.value!![0].tile1, position)
             updatePlayer.value = playerPosition
-
-            // Refresh score
-            // TODO
         } catch (e : Field.PlayerFieldException) { Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show() }
     }
 

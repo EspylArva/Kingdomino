@@ -27,8 +27,7 @@ class GameFragment : Fragment() {
 
     private lateinit var recyclerChoice : RecyclerView  // Available cards
     private lateinit var recyclerMaps : RecyclerView    // Players' field
-    private lateinit var clHeader : GameHeader    // Header with scores
-//    private lateinit var clHeader : LinearLayout    // Header with scores
+    private lateinit var clHeader : GameHeader          // Header with scores
 
 
     override fun onCreateView(
@@ -72,8 +71,6 @@ class GameFragment : Fragment() {
 
         vm.updatePlayer.observe(viewLifecycleOwner, Observer {
             recyclerMaps.adapter!!.notifyItemChanged(it)
-//            clHeader.listPlayerInfo[it].first // name
-//            clHeader.listPlayerInfo[it].second.text = "Score : " + vm.players.value!![it].getScore()
             clHeader.listPlayerInfo[it].second.text = resources.getString(R.string.player_score, vm.players.value!![it].getScore())
 
         })

@@ -5,47 +5,30 @@ import timber.log.Timber
 public class Field {
     // FIXME : should castle have value 0 or 1?
     val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
+    private var domains = HashMap<HashSet<Int>, Tile.Terrain>()
+//    private var domains : Map<HashSet<Int>, Tile.Terrain> = HashMap<HashSet<Int>, Tile.Terrain>()
     init {
         field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
 
     fun calculateScore() : Int
     {
-        val setOfDomains = HashSet<Set<Tile>>()
-        val trimmedDomain = trimmedField(field)
-        for(rowIndex in 0 until trimmedDomain.size) {
-            for(colIndex in 0 until trimmedDomain[0].size) {
-                if(trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.NULL && trimmedDomain[rowIndex][colIndex].type != Tile.Terrain.CASTLE) {
-                    if(setOfDomains.all { domain -> !domain.contains(trimmedDomain[rowIndex][colIndex]) }) {// tile is not referenced in domains
-                        setOfDomains.add( getDomain(rowIndex, colIndex, trimmedDomain[rowIndex][colIndex].type, trimmedDomain) )
-                    }
-                }
-            }
-        }
-
         var score = 0
-        for(domain in setOfDomains)
-        {
-            Timber.d(domain.toString())
-            var multiplier = 0;
-            domain.forEach { tile -> multiplier += tile.crown.value }
-            score += multiplier * domain.size
-        }
-        Timber.e("Computed score: $score")
-        Timber.e("Domains: $setOfDomains")
-        return score
-    }
 
-    private fun getDomain(rowIndex: Int, colIndex: Int, terrainType : Tile.Terrain, field : MutableList<MutableList<Tile>>): Set<Tile> {
-        val domain = HashSet<Tile>()
-//        val domain = HashSet<Tile>()
-        if(field[rowIndex][colIndex].type == terrainType)
+        Timber.d(domains.toString())
+
+        for(domain in domains.keys)
         {
-            domain.add(field[rowIndex][colIndex])
+            var crowns = 0
+            for(tileId in domain)
+            {
+                val y = tileId % 10
+                val x = (tileId - y)/10
+                crowns += field[x][y].crown.value
+            }
+            score += crowns * domain.size
         }
-        if(rowIndex < field.size - 1) { domain.addAll(getDomain(rowIndex+1, colIndex, terrainType, field)) } // propagate downward
-        if(colIndex < field[0].size - 1) { domain.addAll(getDomain(rowIndex, colIndex+1, terrainType, field)) } // propagate to the right
-        return domain
+        return score
     }
 
     fun addTile(t : Tile, posXY : Pair<Int, Int>)
@@ -60,6 +43,8 @@ public class Field {
             {
                 if(validNeighbour(x, y, t.type)) {// at least one neighbour of XY is valid
                     field[x][y] = t
+                    addToDomains(x, y, t)
+
                     Timber.d("Success playing tile $t at $posXY")
                 }
                 else { throw PlayerFieldException("Invalid movement: no valid neighbour has been found near this position.") }
@@ -67,6 +52,40 @@ public class Field {
             else { throw PlayerFieldException("Invalid movement: field already reaches limits of size for a field.") }
         }
     }
+
+    private fun addToDomains(x: Int, y: Int, t: Tile) {
+        // Checking which domain to add to...
+        val neighboursId = getNeighboursId(x, y)
+        // No similar terrain, means only a castle is nearby
+        if(neighboursId.isEmpty()) {
+            val newSet = HashSet<Int>(); newSet.add(x*10 + y)
+            domains[newSet] = field[x][y].type
+        }
+        // Similar terrain found, adding to the first domain
+        else {
+            for(neighbourId in neighboursId)
+            {
+                domains.forEach { entry ->
+                    if(entry.key.contains(neighbourId)) {
+                        entry.key.add(x*10 + y)
+                    }
+                }
+            }
+        }
+
+        // Checking if two domains should be merged
+
+        val domainsContainingXY = domains.filter { entry -> entry.key.contains(x*10 + y) }
+        if(domainsContainingXY.size > 1)
+        {
+            for(i in 1 until domainsContainingXY.size)
+            {
+                (domains.keys.find { domain -> domain == domainsContainingXY.keys.elementAt(0) } as HashSet).addAll(domainsContainingXY.keys.elementAt(i))
+                domains = domains.filter { entry -> entry.key != domainsContainingXY.keys.elementAt(i) } as HashMap
+            }
+        }
+    }
+
 
     private fun trimmedField(field : MutableList<MutableList<Tile>>) : MutableList<MutableList<Tile>>
     {
@@ -96,13 +115,30 @@ public class Field {
     }
 
     private fun validNeighbour(x : Int, y : Int, type : Tile.Terrain) : Boolean {
+        return getNeighboursTypes(x, y).any { terrainType -> terrainType == type || terrainType == Tile.Terrain.CASTLE }
+    }
+
+    private fun getNeighboursId(x: Int, y: Int): List<Int> {
+        val neighbours = mutableListOf<Int>()
+        if(field[x][y].type != Tile.Terrain.NULL)
+        {
+            if(y > 0 && field[x][y-1].type == field[x][y].type) neighbours.add(x*10+(y-1))
+            if(y < 8 && field[x][y+1].type == field[x][y].type) neighbours.add(x*10+(y+1))
+            if(x > 0 && field[x-1][y].type == field[x][y].type) neighbours.add((x-1)*10+y)
+            if(x < 8 && field[x+1][y].type == field[x][y].type) neighbours.add((x+1)*10+y)
+        }
+        return neighbours
+    }
+
+    private fun getNeighboursTypes(x : Int, y : Int) : Set<Tile.Terrain>
+    {
         val neighbours = HashSet<Tile.Terrain>()
         if(y > 0) neighbours.add(field[x][y-1].type)
         if(y < 8) neighbours.add(field[x][y+1].type)
         if(x > 0) neighbours.add(field[x-1][y].type)
         if(x < 8) neighbours.add(field[x+1][y].type)
 
-        return neighbours.any { terrainType -> terrainType == type || terrainType == Tile.Terrain.CASTLE }
+        return neighbours
     }
 
 
