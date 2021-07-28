@@ -11,6 +11,9 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="player_score">Score : %d</string>
+    <string name="empty_deck">Empty deck! Shuffling…</string>
+    <string name="drawing_cards">Drawing 4 new cards…</string>
+    <string name="error_play_tile">Could not play selected tile at this location</string>
 
 
 </resources>

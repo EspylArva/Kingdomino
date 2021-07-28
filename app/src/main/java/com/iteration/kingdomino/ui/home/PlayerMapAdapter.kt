@@ -77,7 +77,7 @@ class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val
                 // OnClickListener
                 clTile.setOnClickListener {
                     Timber.d("Clicked on $row x $col: ${field[row][col]}")
-                    vm.playTile( position, Pair(row, col))
+                    vm.playTile(position, Pair(row, col))
                 }
 
             }

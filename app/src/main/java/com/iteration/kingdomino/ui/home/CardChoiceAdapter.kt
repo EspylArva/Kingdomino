@@ -16,7 +16,7 @@ import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
 import timber.log.Timber
 
-class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
+class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>, private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
@@ -40,16 +40,23 @@ class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : Recyc
         val size = (metrics.widthPixels * 0.2).toInt()
         setCardSize(holder, size)
 
-        holder.itemView.setOnClickListener {
-            // highlight selection
-//            for(i in 0..3)
-//            {
-//                if(i != position)
-//                {
-//
-//                }
-//            }
+        if(vm.availableCardsInChoice.value!!.contains(position))
+        {
+            holder.itemView.setOnClickListener {
+                // highlight selection
+                for(i in 0..3)
+                {
+                    if (i == position){ ((holder.itemView.parent as RecyclerView).findViewHolderForAdapterPosition(i) as ViewHolder).imgOverlay.background = null }
+                    else { ((holder.itemView.parent as RecyclerView).findViewHolderForAdapterPosition(i) as ViewHolder).imgOverlay.setBackgroundColor(ResourcesCompat.getColor(holder.itemView.resources, R.color.unselected, null)) }
+                }
 
+                // set selection
+                vm.cardSelectionPosition.value = position
+            }
+        }
+        else {
+            holder.imgOverlay.setBackgroundColor(ResourcesCompat.getColor(holder.itemView.resources, R.color.unselected, null))
+            holder.itemView.setOnClickListener {  }
         }
     }
 
@@ -83,6 +90,8 @@ class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>) : Recyc
         val imgCrowns2 : ImageView = itemView.findViewById(R.id.img_card_crowns_two)
         val imgType1 : ImageView = itemView.findViewById(R.id.img_card_type_one)
         val imgType2 : ImageView = itemView.findViewById(R.id.img_card_type_two)
+
+        val imgOverlay : ImageView = itemView.findViewById(R.id.img_card_overlay)
     }
 
 }

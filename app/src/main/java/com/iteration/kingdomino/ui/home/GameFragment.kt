@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
@@ -50,11 +51,11 @@ class GameFragment : Fragment() {
         clHeader.setOnClickListener {
             if(vm.deck.size < 5)
             {
-                Toast.makeText(requireContext(), "Empty deck! Shuffling...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), resources.getString(R.string.empty_deck), Toast.LENGTH_SHORT).show()
                 vm.setDeck()
             }
             vm.drawCards()
-            Toast.makeText(requireContext(), "Drawing 4 new cards...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), resources.getString(R.string.drawing_cards), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,6 +75,26 @@ class GameFragment : Fragment() {
             clHeader.listPlayerInfo[it].second.text = resources.getString(R.string.player_score, vm.players.value!![it].getScore())
 
         })
+
+        vm.cardSelectionPosition.observe(viewLifecycleOwner, Observer {
+            for(i in 0..3) {
+                if(recyclerChoice.findViewHolderForAdapterPosition(i) != null && it == -1) {
+                    (recyclerChoice.findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder).imgOverlay.background = null
+                }
+            }
+            recyclerChoice.adapter!!.notifyDataSetChanged()
+        })
+
+        vm.availableCardsInChoice.observe(viewLifecycleOwner, Observer {
+            if(it.size == 0)
+            {
+                vm.drawCards()
+
+                recyclerChoice.adapter!!.notifyDataSetChanged()
+            }
+        })
+
+
     }
 
     private fun initViews(inflater: LayoutInflater, container: ViewGroup?): View? {
@@ -83,7 +104,7 @@ class GameFragment : Fragment() {
         clHeader = root.findViewById(R.id.cl_player_info)
 
         recyclerChoice.setHasFixedSize(true)
-        recyclerChoice.adapter = CardChoiceAdapter(vm.choice)
+        recyclerChoice.adapter = CardChoiceAdapter(vm.choice, vm)
         val recyclerLayout = LinearLayoutManager(requireContext())
         recyclerLayout.orientation = LinearLayoutManager.HORIZONTAL
         recyclerChoice.layoutManager = recyclerLayout
