@@ -7,7 +7,7 @@
     tools:context=".ui.home.GameFragment">
 
     <com.iteration.kingdomino.components.GameHeader
-            android:id="@+id/cl_player_info"
+        android:id="@+id/cl_player_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -23,7 +23,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_player_info"
-        app:layout_constraintBottom_toTopOf="@id/recycler_card_choice" />
+        app:layout_constraintBottom_toTopOf="@id/layout_action_buttons" />
+
+    <LinearLayout
+        android:id="@+id/layout_action_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/recycler_card_choice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_player_field">
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dis"
+            android:text="@string/cancel"/>
+
+        <Button
+            android:id="@+id/button_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dis"
+            android:text="@string/confirm"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_card_choice"

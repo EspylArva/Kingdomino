@@ -14,6 +14,9 @@
     <string name="empty_deck">Empty deck! Shuffling…</string>
     <string name="drawing_cards">Drawing 4 new cards…</string>
     <string name="error_play_tile">Could not play selected tile at this location</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="wrong_field">Cannot play on another player\'s field. Please play on your own field.</string>
 
 
 </resources>

@@ -9,7 +9,7 @@ data class Tile(val type : Terrain, val crown : Crown) {
     {
         val CASTLES = listOf(R.drawable.ic_castle_red, R.drawable.ic_castle_blue, R.drawable.ic_castle_orange, R.drawable.ic_castle_green)
     }
-    override fun toString() = "[$type ($crown)]"
+    override fun toString() = "[$type (${crown.value})]"
 
 
     enum class Terrain(val drawableId: Int) {

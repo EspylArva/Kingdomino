@@ -1,5 +1,6 @@
 package com.iteration.kingdomino.ui.home
 
+import android.annotation.SuppressLint
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -7,27 +8,32 @@ import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
+import com.iteration.kingdomino.game.Field
 import com.iteration.kingdomino.game.Player
 import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
 
 
-class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val vm : GameViewModel) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
+class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
     }
 
     override fun getItemCount(): Int {
-        return players.value!!.size
+        return vm.players.value!!.size
     }
 
+    @SuppressLint("ShowToast")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val field = players.value!![position].map.field
+        Timber.d("onBindViewHolder of PlayerMapAdapter. position=$position")
+        val field = vm.immutablePlayers[position].map.field
+
 
         holder.playerMap.removeAllViews()
         val rows = field.size
@@ -38,7 +44,6 @@ class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val
 
         val metrics = DisplayMetrics()
         holder.itemView.context.display?.getRealMetrics(metrics)
-
         val size = (metrics.widthPixels * 0.1).toInt()
 
 
@@ -76,8 +81,20 @@ class PlayerMapAdapter(private val players : LiveData<List<Player>>, private val
 
                 // OnClickListener
                 clTile.setOnClickListener {
-                    Timber.d("Clicked on $row x $col: ${field[row][col]}")
-                    vm.playTile(position, Pair(row, col))
+                    val currentPlayer = vm.players.value!![0]
+                    Timber.d("Clicked on $row x $col: ${field[row][col]} of ${vm.immutablePlayers[position]}. Current player=$currentPlayer")
+                    if(currentPlayer == vm.immutablePlayers[position]){
+                        try {
+                            vm.addPosition(row, col)
+//                            currentPlayer.playCard(vm.playerCardSelection.value!!, Pair(row, col), Pair(row, col)) // FIXME : should be two different pairs of coordinates
+                        } catch (e : Field.PlayerFieldException) {
+                            Timber.e("Error when playing ${vm.playerCardSelection.value}: $e")
+                            Toast.makeText(holder.itemView.context, holder.itemView.resources.getString(R.string.error_play_tile), Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Timber.d("Cannot play on another player's field. Get back to yours! (currently @ $position, should be ${vm.immutablePlayers.indexOf(currentPlayer)}")
+                        Toast.makeText(holder.itemView.context, holder.itemView.resources.getText(R.string.wrong_field), Toast.LENGTH_SHORT).show()
+                    }
                 }
 
             }

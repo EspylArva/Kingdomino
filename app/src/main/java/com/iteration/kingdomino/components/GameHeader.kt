@@ -9,7 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.allViews
 import com.iteration.kingdomino.R
+import com.iteration.kingdomino.game.Player
 
 class GameHeader @JvmOverloads constructor(
         ctx : Context,
@@ -17,12 +19,18 @@ class GameHeader @JvmOverloads constructor(
         defStyleAttr : Int = 0
 ) : LinearLayout(ctx, attrs, defStyleAttr)
 {
+    /**
+     * TextViews containing information on player.
+     * first:  Player's ID
+     * second: Player's score
+     */
     val listPlayerInfo : MutableList<Pair<TextView, TextView>> = mutableListOf()
     private val listLayouts : MutableList<LinearLayout> = mutableListOf()
 
 
 
     init {
+
         this.orientation = HORIZONTAL
         this.gravity = Gravity.CENTER
 
@@ -60,4 +68,19 @@ class GameHeader @JvmOverloads constructor(
         }
     }
 
+    fun nextPlayer()
+    {
+        val iterator = this.allViews.iterator()
+
+
+//        this.removeViewAt(0)
+
+    }
+
+    fun updatePlayers(players: List<Player>) {
+        for(i in 0..3) {
+            listPlayerInfo[i].first.text = players[i].name
+            listPlayerInfo[i].second.text = resources.getString(R.string.player_score, players[i].getScore())
+        }
+    }
 }

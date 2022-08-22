@@ -10,74 +10,74 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
 import timber.log.Timber
+import java.lang.Exception
 
-class CardChoiceAdapter(private val cards : LiveData<MutableList<Card>>, private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
+class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
     }
 
     override fun getItemCount(): Int {
-        return cards.value!!.size
+        return vm.choice.value!!.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.lblId.text = cards.value!![position].id.toString()
+        Timber.d("onBindViewHolder of CardChoiceAdapter")
+        val card = vm.choice.value!!.entries.toList()[position].key
 
-        setBackground(holder.imgCrowns1, cards.value!![position].tile1.crown.drawableId)
-        setBackground(holder.imgType1, cards.value!![position].tile1.type.drawableId)
-        setBackground(holder.imgCrowns2, cards.value!![position].tile2.crown.drawableId)
-        setBackground(holder.imgType2, cards.value!![position].tile2.type.drawableId)
+        holder.lblId.text = card.id.toString()
 
-        val metrics = DisplayMetrics()
-        holder.itemView.context.display?.getRealMetrics(metrics)
+        holder.imgCrowns1.setBackground(card.tile1.crown.drawableId)
+        holder.imgType1.setBackground(card.tile1.type.drawableId)
+        holder.imgCrowns2.setBackground(card.tile2.crown.drawableId)
+        holder.imgType2.setBackground(card.tile2.type.drawableId)
 
-        val size = (metrics.widthPixels * 0.2).toInt()
-        setCardSize(holder, size)
+        setCardSize(holder)
 
-        if(vm.availableCardsInChoice.value!!.contains(position))
-        {
-            holder.itemView.setOnClickListener {
-                // highlight selection
-                for(i in 0..3)
-                {
-                    if (i == position){ ((holder.itemView.parent as RecyclerView).findViewHolderForAdapterPosition(i) as ViewHolder).imgOverlay.background = null }
-                    else { ((holder.itemView.parent as RecyclerView).findViewHolderForAdapterPosition(i) as ViewHolder).imgOverlay.setBackgroundColor(ResourcesCompat.getColor(holder.itemView.resources, R.color.unselected, null)) }
+        holder.itemView.setOnClickListener {
+            Timber.d(
+            """
+                |Player chooses a card
+                |Card: position=$position selection=${card}
+                |Previously selected card: selection=${vm.playerCardSelection.value}
+            """.trimMargin()
+            )
+
+            // (No card was chosen) OR
+            // (A card was chosen AND Chosen card is different)
+            if (vm.playerCardSelection.value == null || (vm.playerCardSelection.value != card)) {
+                if (vm.choice.value!![card] == true) { // Card can be played (has not been played yet)
+                    vm.playerCardSelection.value = card
+                } else {
+                    Timber.w("Card $card has already been played by another player this turn (registeredState=${vm.choice.value!![card]})")
                 }
-
-                // set selection
-                vm.cardSelectionPosition.value = position
+            } else { // Card chosen is the same
+                vm.playerCardSelection.value = null
             }
-        }
-        else {
-            holder.imgOverlay.setBackgroundColor(ResourcesCompat.getColor(holder.itemView.resources, R.color.unselected, null))
-            holder.itemView.setOnClickListener {  }
+            Timber.d("Currently selected card=${vm.playerCardSelection.value}")
         }
     }
 
-    private fun setCardSize(holder: ViewHolder, size: Int) {
+    private fun setCardSize(holder: ViewHolder) {
+        val metrics = DisplayMetrics()
+        holder.itemView.context.display?.getRealMetrics(metrics)
+        val size = (metrics.widthPixels * 0.2).toInt()
         holder.clFirst.layoutParams.width  = size; holder.clFirst.layoutParams.height  = size
         holder.clSecond.layoutParams.width = size; holder.clSecond.layoutParams.height = size
         holder.clSecond.requestLayout()
     }
 
-    private fun setBackground(iv : ImageView, drawableId : Int) {
-        if (drawableId != 0) {
-            iv.background = ResourcesCompat.getDrawable(iv.resources, drawableId, null)
-        }
-        else
-        {
-            iv.background = null
-        }
+
+    private fun ImageView.setBackground(drawableId: Int) {
+        this.background = if (drawableId != 0) ResourcesCompat.getDrawable(this.resources, drawableId, null) else null
     }
-
-
-
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {

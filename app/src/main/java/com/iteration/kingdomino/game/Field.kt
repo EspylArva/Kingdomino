@@ -31,12 +31,31 @@ public class Field {
         return score
     }
 
+
+    fun visualizeTile(t : Tile, posXY : Pair<Int, Int>) {
+        val x = posXY.first; val y = posXY.second
+
+        if(x < 0 || x > 8){ throw PlayerFieldException("It WILL BE impossible to add this tile to the player field: given x index was $x; should be between 0 and 8") }
+        if(y < 0 || y > 8){ throw PlayerFieldException("It WILL BE impossible to add this tile to the player field: given y index was $y; should be between 0 and 8") }
+        if(field[x][y].type != Tile.Terrain.NULL) throw PlayerFieldException("It WILL BE impossible to add this tile: target is not an empty tile")
+        else {
+            if(fieldSmallEnough(x, y)) {
+                field[x][y] = t
+                addToDomains(x, y, t)
+
+                Timber.d("Visualizing playing $t at $posXY")
+            }
+            else { throw PlayerFieldException("Invalid movement: field already reaches limits of size for a field.") }
+        }
+    }
+
     fun addTile(t : Tile, posXY : Pair<Int, Int>)
     {
         val x = posXY.first; val y = posXY.second
 
         if(x < 0 || x > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given x index was $x; should be between 0 and 8") }
         if(y < 0 || y > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given y index was $y; should be between 0 and 8") }
+
         if(field[x][y].type != Tile.Terrain.NULL) throw PlayerFieldException("Impossible to add this tile: target is not an empty tile")
         else {
             if(fieldSmallEnough(x, y))
