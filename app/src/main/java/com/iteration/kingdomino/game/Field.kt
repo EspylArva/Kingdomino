@@ -2,11 +2,21 @@ package com.iteration.kingdomino.game
 
 import timber.log.Timber
 
-public class Field {
+class Field {
+
+    constructor()
+
+    constructor(argField: MutableList<MutableList<Tile>>) {
+        field.clear()
+        field.addAll(argField)
+    }
+
     // FIXME : should castle have value 0 or 1?
     val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
     private var domains = HashMap<HashSet<Int>, Tile.Terrain>()
-//    private var domains : Map<HashSet<Int>, Tile.Terrain> = HashMap<HashSet<Int>, Tile.Terrain>()
+    val width: Int get() = this.field.size
+    val height: Int get() = this.field[0].size
+
     init {
         field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
@@ -15,7 +25,7 @@ public class Field {
     {
         var score = 0
 
-        Timber.d(domains.toString())
+        Timber.v(domains.toString())
 
         for(domain in domains.keys)
         {
@@ -28,51 +38,36 @@ public class Field {
             }
             score += crowns * domain.size
         }
+        Timber.d("Computed score is $score")
         return score
     }
 
-
-    fun visualizeTile(t : Tile, posXY : Pair<Int, Int>) {
-        val x = posXY.first; val y = posXY.second
-
-        if(x < 0 || x > 8){ throw PlayerFieldException("It WILL BE impossible to add this tile to the player field: given x index was $x; should be between 0 and 8") }
-        if(y < 0 || y > 8){ throw PlayerFieldException("It WILL BE impossible to add this tile to the player field: given y index was $y; should be between 0 and 8") }
-        if(field[x][y].type != Tile.Terrain.NULL) throw PlayerFieldException("It WILL BE impossible to add this tile: target is not an empty tile")
-        else {
-            if(fieldSmallEnough(x, y)) {
-                field[x][y] = t
-                addToDomains(x, y, t)
-
-                Timber.d("Visualizing playing $t at $posXY")
-            }
-            else { throw PlayerFieldException("Invalid movement: field already reaches limits of size for a field.") }
+    fun addCard(card: Card, tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>) {
+        if (isValidNeighbour(tile1Location, card.tile1) || isValidNeighbour(tile2Location, card.tile2)) {
+            addTile(card.tile1, tile1Location)
+            addTile(card.tile2, tile2Location)
+            Timber.i("Success playing card=$card at pos1=$tile1Location pos2=$tile2Location")
+        } else {
+            throw PlayerFieldException("Neither tile of card=$card has valid neighbour at positions [$tile1Location|$tile2Location] ")
         }
     }
 
-    fun addTile(t : Tile, posXY : Pair<Int, Int>)
+    private fun addTile(t : Tile, posXY : Pair<Int, Int>)
     {
         val x = posXY.first; val y = posXY.second
 
-        if(x < 0 || x > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given x index was $x; should be between 0 and 8") }
-        if(y < 0 || y > 8){ throw PlayerFieldException("Impossible to add this tile to the player field: given y index was $y; should be between 0 and 8") }
+        if(x < 0 || x > 8){ throw PlayerFieldException("Given x index was $x; should be between 0 and 8") }
+        if(y < 0 || y > 8){ throw PlayerFieldException("Given y index was $y; should be between 0 and 8") }
+        if(!isTileLocationFree(posXY)) throw PlayerFieldException("Tile at $posXY is not free: currently occupied by ${field[x][y]}")
+        if(!isFieldSmallEnough(posXY)) throw PlayerFieldException("Playing tile at $posXY would make it exceed max. size 5x5")
 
-        if(field[x][y].type != Tile.Terrain.NULL) throw PlayerFieldException("Impossible to add this tile: target is not an empty tile")
-        else {
-            if(fieldSmallEnough(x, y))
-            {
-                if(validNeighbour(x, y, t.type)) {// at least one neighbour of XY is valid
-                    field[x][y] = t
-                    addToDomains(x, y, t)
+        field[x][y] = t
+        addToDomains(x, y)
 
-                    Timber.d("Success playing tile $t at $posXY")
-                }
-                else { throw PlayerFieldException("Invalid movement: no valid neighbour has been found near this position.") }
-            }
-            else { throw PlayerFieldException("Invalid movement: field already reaches limits of size for a field.") }
-        }
+        Timber.d("Success playing tile $t at $posXY")
     }
 
-    private fun addToDomains(x: Int, y: Int, t: Tile) {
+    private fun addToDomains(x: Int, y: Int) {
         // Checking which domain to add to...
         val neighboursId = getNeighboursId(x, y)
         // No similar terrain, means only a castle is nearby
@@ -106,7 +101,7 @@ public class Field {
     }
 
 
-    private fun trimmedField(field : MutableList<MutableList<Tile>>) : MutableList<MutableList<Tile>>
+    private fun trimmedField(field : MutableList<MutableList<Tile>>) : Field
     {
         val trimmedField = fieldClone() // clone the field
         for(i in 8 downTo 0) {
@@ -117,7 +112,7 @@ public class Field {
                 trimmedField.forEach { row -> row.removeAt(i) }
             }
         }
-        return trimmedField
+        return Field(trimmedField)
     }
 
     fun trimmedField() = trimmedField(field)
@@ -126,15 +121,42 @@ public class Field {
         return field.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
     }
 
-    private fun fieldSmallEnough(x : Int, y : Int) : Boolean {
+    fun isFieldSmallEnough(position: Pair<Int, Int>) : Boolean {
+        val x = position.first
+        val y = position.second
         val futureField = fieldClone()
         futureField[x][y] = Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE)
         val trimmed = trimmedField(futureField)
-        return (trimmed.size < 6) and (trimmed[0].size < 6)
+        Timber.v("Checking if the field does not exceed 5x5 even after adding a tile at ${x}x$y: currentSize=${trimmedField().width}x${trimmedField().height}. futureSize=${trimmed.width}x${trimmed.height}")
+        return (trimmed.width < 6) and (trimmed.height < 6)
     }
 
-    private fun validNeighbour(x : Int, y : Int, type : Tile.Terrain) : Boolean {
-        return getNeighboursTypes(x, y).any { terrainType -> terrainType == type || terrainType == Tile.Terrain.CASTLE }
+    fun isValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
+        val x = position.first
+        val y = position.second
+        val anyValidNeighbour = getNeighboursTypes(x, y).any { terrainType -> terrainType == tile.type || terrainType == Tile.Terrain.CASTLE }
+        Timber.v("Checking if any neighbour of ${x}x$y is a valid neighbour: neighbours=${getNeighboursTypes(x, y)} anyValidNeighbour=$anyValidNeighbour")
+        return anyValidNeighbour
+    }
+
+    fun isTileLocationFree(tileLocation: Pair<Int, Int>) : Boolean {
+        val x = tileLocation.first
+        val y = tileLocation.second
+        val locationFree = field[x][y].type == Tile.Terrain.NULL
+        Timber.v("Checking if ${x}x$y cell is free: XYCell.type=${field[x][y].type}. locationFree=$locationFree")
+        return locationFree
+    }
+
+    fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) : Boolean {
+        val sameX = (tile1Location.first == tile2Location.first) && (tile1Location.second == tile2Location.second + 1 || tile1Location.second == tile2Location.second - 1)
+        val sameY = (tile1Location.second == tile2Location.second) && (tile1Location.first == tile2Location.first + 1 || tile1Location.first == tile2Location.first - 1)
+        Timber.v("Checking if tile1 and tile2 are adjacent cell is free: tile1Location=$tile1Location tile2Location=$tile2Location. sameX=$sameX sameY=$sameY")
+
+        val tile1ValidNeighbour = isValidNeighbour(tile1Location, card.tile1)
+        val tile2ValidNeighbour = isValidNeighbour(tile2Location, card.tile2)
+        Timber.v("Checking if any tile has valid neighbour: tile1ValidNeighbour=$tile1ValidNeighbour tile2ValidNeighbour=$tile2ValidNeighbour")
+
+        return (sameX || sameY) && (tile1ValidNeighbour || tile2ValidNeighbour)
     }
 
     private fun getNeighboursId(x: Int, y: Int): List<Int> {
@@ -160,9 +182,6 @@ public class Field {
         return neighbours
     }
 
-
-
-
     private fun mapAsString(field : MutableList<MutableList<Tile>>) : String
     {
         var mapRepresentation = ""
@@ -178,8 +197,12 @@ public class Field {
     }
 
     override fun toString(): String {
-        return mapAsString(trimmedField(field))
+        return mapAsString(trimmedField(field).field)
     }
 
-    class PlayerFieldException(message : String) : Exception(message)
+    class PlayerFieldException(message : String) : Exception(message) {
+        private val PLAYER_FIELD_EXCEPTION_HEADER = "Invalid action: "
+        override val message: String?
+            get() = PLAYER_FIELD_EXCEPTION_HEADER + super.message
+    }
 }

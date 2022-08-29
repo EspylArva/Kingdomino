@@ -9,9 +9,12 @@ class Player(val name : String) : MutableLiveData<Player>() {
     val map = Field()
 
     fun playCard(card: Card, tile1Position: Pair<Int, Int>, tile2Position: Pair<Int, Int>) {
+        map.addCard(card, tile1Position, tile2Position)
         postValue(this)
-        map.addTile(card.tile1, tile1Position)
-        map.addTile(card.tile2, tile2Position)
+    }
+
+    fun displayGhost(tile: Tile, position: Pair<Int, Int>) {
+        map.displayGhost(tile, position)
     }
 
     fun getScore() : Int
@@ -43,5 +46,4 @@ class Player(val name : String) : MutableLiveData<Player>() {
     override fun toString(): String {
         return "[Player: name=$name currentScore=${getScore()}]"
     }
-
 }

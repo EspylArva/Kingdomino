@@ -30,3 +30,5 @@ data class Tile(val type : Terrain, val crown : Crown) {
         THREE(R.drawable.ic_three_crown, 3)
     }
 }
+
+fun nullTile() : Tile = Tile(Tile.Terrain.NULL, Tile.Crown.ZERO)
