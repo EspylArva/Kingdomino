@@ -13,10 +13,6 @@ class Player(val name : String) : MutableLiveData<Player>() {
         postValue(this)
     }
 
-    fun displayGhost(tile: Tile, position: Pair<Int, Int>) {
-        map.displayGhost(tile, position)
-    }
-
     fun getScore() : Int
     {
         return map.calculateScore()

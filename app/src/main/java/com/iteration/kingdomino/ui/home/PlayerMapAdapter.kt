@@ -89,24 +89,26 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         val card = vm.playerCardSelection.value ?: return
 
         if(positions.size == 1 && isValidTilePlacement(player, positions, card, 0)) {
-            setNewDrawable(card.tile1, positions[0], clTile)
+            setNewDrawable(card.tile1, positions[0], 0.7f, clTile)
         } else if (positions.size == 2 && isValidTilePlacement(player, positions, card, 0, 1)) {
-            setNewDrawable(card.tile1, positions[0], clTile)
-            setNewDrawable(card.tile2, positions[1], clTile)
+            setNewDrawable(card.tile1, positions[0], 0.7f, clTile)
+            setNewDrawable(card.tile2, positions[1], 0.7f, clTile)
         }
     }
-    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, clTile: ConstraintLayout) {
+    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, clTile: ConstraintLayout) {
         Timber.v("Setting new drawable over tile @$position. tile=$clTile")
 
         clTile.removeAllViews()
 
-        val ivType = ImageView(clTile.context)
-        ivType.setImageResource(tile.type.drawableId)
         val ivCrown = ImageView(clTile.context)
         ivCrown.setImageResource(tile.crown.drawableId)
+        ivCrown.alpha = 1f.coerceAtMost(alpha * 1.5f)
+        val ivType = ImageView(clTile.context)
+        ivType.setImageResource(tile.type.drawableId)
+        ivType.alpha = alpha
 
-        ivType.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
         ivCrown.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+        ivType.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
         clTile.addView(ivCrown)
         clTile.addView(ivType)

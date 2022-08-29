@@ -43,7 +43,9 @@ class Field {
     }
 
     fun addCard(card: Card, tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>) {
-        if (isValidNeighbour(tile1Location, card.tile1) || isValidNeighbour(tile2Location, card.tile2)) {
+        val anyValidNeighbour = isValidNeighbour(tile1Location, card.tile1) || isValidNeighbour(tile2Location, card.tile2)
+        val validCardLocation = isCardLocationValid(tile1Location, tile2Location)
+        if (anyValidNeighbour && validCardLocation) {
             addTile(card.tile1, tile1Location)
             addTile(card.tile2, tile2Location)
             Timber.i("Success playing card=$card at pos1=$tile1Location pos2=$tile2Location")
