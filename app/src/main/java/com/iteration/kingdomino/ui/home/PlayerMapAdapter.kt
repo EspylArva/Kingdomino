@@ -88,6 +88,8 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         val positions = vm.playerPickedPositions.value ?: return
         val card = vm.playerCardSelection.value ?: return
 
+        Timber.d("Displaying ghost of card=$card at positions=$positions")
+
         if(positions.size == 1 && isValidTilePlacement(player, positions, card, 0)) {
             setNewDrawable(card.tile1, positions[0], 0.7f, clTile)
         } else if (positions.size == 2 && isValidTilePlacement(player, positions, card, 0, 1)) {
@@ -96,8 +98,6 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         }
     }
     private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, clTile: ConstraintLayout) {
-        Timber.v("Setting new drawable over tile @$position. tile=$clTile")
-
         clTile.removeAllViews()
 
         val ivCrown = ImageView(clTile.context)

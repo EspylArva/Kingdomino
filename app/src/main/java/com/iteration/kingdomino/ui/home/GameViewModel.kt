@@ -152,20 +152,26 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         Timber.e("=========================")
     }
 
+    @Throws(GameBusinessLogicException::class)
     fun addPosition(row: Int, col: Int) {
         if(playerPickedPositions.value == null) return
-        when(playerPickedPositions.value!!.size) {
-            0, 1 -> {
+        when (playerPickedPositions.value!!.size) {
+            0 -> playerPickedPositions.value!!.add(Pair(row, col))
+            1 -> {
+                val firstPickedPos = Pair(playerPickedPositions.value!![0].first, playerPickedPositions.value!![0].second)
+                val secondPickedPos = Pair(row, col)
+                if(!players.value!![0].map.isCardTilesAdjacent(firstPickedPos, secondPickedPos)) {
+                    playerPickedPositions.value!!.clear()
+                }
                 playerPickedPositions.value!!.add(Pair(row, col))
-                playerPickedPositions.postValue(playerPickedPositions.value)
             }
             2 -> {
                 playerPickedPositions.value!!.clear()
                 playerPickedPositions.value!!.add(Pair(row, col))
-                playerPickedPositions.postValue(playerPickedPositions.value)
             }
             else -> throw GameBusinessLogicException("Picked positions should never exceed size 2: currently ${playerPickedPositions.value!!.size} (${playerPickedPositions.value!!})")
         }
+        playerPickedPositions.postValue(playerPickedPositions.value)
     }
 
     class DeckSizeException(message: String) : Exception(message)

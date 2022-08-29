@@ -43,9 +43,7 @@ class Field {
     }
 
     fun addCard(card: Card, tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>) {
-        val anyValidNeighbour = isValidNeighbour(tile1Location, card.tile1) || isValidNeighbour(tile2Location, card.tile2)
-        val validCardLocation = isCardLocationValid(tile1Location, tile2Location)
-        if (anyValidNeighbour && validCardLocation) {
+        if (isCardLocationValid(tile1Location, tile2Location, card)) {
             addTile(card.tile1, tile1Location)
             addTile(card.tile2, tile2Location)
             Timber.i("Success playing card=$card at pos1=$tile1Location pos2=$tile2Location")
@@ -88,14 +86,10 @@ class Field {
                 }
             }
         }
-
         // Checking if two domains should be merged
-
         val domainsContainingXY = domains.filter { entry -> entry.key.contains(x*10 + y) }
-        if(domainsContainingXY.size > 1)
-        {
-            for(i in 1 until domainsContainingXY.size)
-            {
+        if(domainsContainingXY.size > 1) {
+            for(i in 1 until domainsContainingXY.size) {
                 (domains.keys.find { domain -> domain == domainsContainingXY.keys.elementAt(0) } as HashSet).addAll(domainsContainingXY.keys.elementAt(i))
                 domains = domains.filter { entry -> entry.key != domainsContainingXY.keys.elementAt(i) } as HashMap
             }
@@ -149,17 +143,21 @@ class Field {
         return locationFree
     }
 
-    fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) : Boolean {
+    fun isCardTilesAdjacent(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>) : Boolean {
         val sameX = (tile1Location.first == tile2Location.first) && (tile1Location.second == tile2Location.second + 1 || tile1Location.second == tile2Location.second - 1)
         val sameY = (tile1Location.second == tile2Location.second) && (tile1Location.first == tile2Location.first + 1 || tile1Location.first == tile2Location.first - 1)
         Timber.v("Checking if tile1 and tile2 are adjacent cell is free: tile1Location=$tile1Location tile2Location=$tile2Location. sameX=$sameX sameY=$sameY")
+        return sameX || sameY
+    }
 
+    fun isNeighbourValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) : Boolean {
         val tile1ValidNeighbour = isValidNeighbour(tile1Location, card.tile1)
         val tile2ValidNeighbour = isValidNeighbour(tile2Location, card.tile2)
         Timber.v("Checking if any tile has valid neighbour: tile1ValidNeighbour=$tile1ValidNeighbour tile2ValidNeighbour=$tile2ValidNeighbour")
-
-        return (sameX || sameY) && (tile1ValidNeighbour || tile2ValidNeighbour)
+        return tile1ValidNeighbour || tile2ValidNeighbour
     }
+    
+    fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) = isCardTilesAdjacent(tile1Location, tile2Location) && isNeighbourValid(tile1Location, tile2Location, card)
 
     private fun getNeighboursId(x: Int, y: Int): List<Int> {
         val neighbours = mutableListOf<Int>()
