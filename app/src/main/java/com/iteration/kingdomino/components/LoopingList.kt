@@ -10,7 +10,7 @@ class LoopingList<T> internal constructor(private var array: Array<Any?>) : Muta
         this.value = ArrayList()
     }
 
-    constructor() : this(emptyArray()) {}
+    constructor() : this(array= emptyArray()) {}
     constructor(elements: Collection<T>) : this(elements.toTypedArray<Any?>()) {
         this.value!!.addAll(elements)
     }
