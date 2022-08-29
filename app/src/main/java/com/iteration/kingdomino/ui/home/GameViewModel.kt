@@ -34,12 +34,11 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
      */
     var players = MutableLiveData<MutableList<Player>>().apply { value = mutableListOf() }
     var playerOrder : MutableMap<Player, Int>
-    var currentPlayer : Player? = null
+    val currentPlayer : Player?
         get() = players.value!!.first()
-    var currentPlayerIndex : Int = 0
+    val currentPlayerIndex : Int
         get() {
             return playerOrder.entries.stream()
-                    .peek { e -> Timber.e("$e") }
                     .map { entry -> entry.key }
                     .collect(toList())
                     .indexOf(currentPlayer)
