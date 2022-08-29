@@ -74,7 +74,6 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
                     Timber.d("Clicked on $row x $col: ${field[row][col]} of ${vm.playerOrder.values.toList()[position]}. Current player=$currentPlayer")
                     if(currentPlayer == vm.playerOrder.keys.toList()[position]){
                         vm.addPosition(row, col)
-                        showGhost(currentPlayer, clTile)
                     } else {
                         Timber.w("Cannot play on another player's field. Get back to yours! (currently @ $position, should be ${vm.playerOrder.keys.toList().indexOf(currentPlayer)}")
                         Toast.makeText(holder.itemView.context, holder.itemView.resources.getText(R.string.wrong_field), Toast.LENGTH_SHORT).show()
@@ -84,20 +83,25 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         }
     }
 
-    private fun showGhost(player: Player, clTile: ConstraintLayout) {
+    fun showGhost(player: Player, holder: ViewHolder) {
         val positions = vm.playerPickedPositions.value ?: return
         val card = vm.playerCardSelection.value ?: return
+
 
         Timber.d("Displaying ghost of card=$card at positions=$positions")
 
         if(positions.size == 1 && isValidTilePlacement(player, positions, card, 0)) {
-            setNewDrawable(card.tile1, positions[0], 0.7f, clTile)
+            setNewDrawable(card.tile1, positions[0], 0.7f, holder)
         } else if (positions.size == 2 && isValidTilePlacement(player, positions, card, 0, 1)) {
-            setNewDrawable(card.tile1, positions[0], 0.7f, clTile)
-            setNewDrawable(card.tile2, positions[1], 0.7f, clTile)
+            setNewDrawable(card.tile1, positions[0], 0.7f, holder)
+            setNewDrawable(card.tile2, positions[1], 0.7f, holder)
         }
     }
-    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, clTile: ConstraintLayout) {
+    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, holder: ViewHolder) {
+        val index = position.first*9 + position.second
+        Timber.i("Trying to display ghost @$position. Shooting for index=$index")
+        val clTile = holder.playerMap[index] as ConstraintLayout
+
         clTile.removeAllViews()
 
         val ivCrown = ImageView(clTile.context)

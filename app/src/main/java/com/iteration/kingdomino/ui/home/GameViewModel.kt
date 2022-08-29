@@ -34,6 +34,16 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
      */
     var players = MutableLiveData<MutableList<Player>>().apply { value = mutableListOf() }
     var playerOrder : MutableMap<Player, Int>
+    var currentPlayer : Player? = null
+        get() = players.value!!.first()
+    var currentPlayerIndex : Int = 0
+        get() {
+            return playerOrder.entries.stream()
+                    .peek { e -> Timber.e("$e") }
+                    .map { entry -> entry.key }
+                    .collect(toList())
+                    .indexOf(currentPlayer)
+        }
 
     /**
      * Which card has been picked by the player
@@ -67,6 +77,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     fun drawCards() {
         if(deck.size < 4) {
             // FIXME: show game ending results
+            Timber.e("End results: ${playerOrder.keys}")
             throw DeckSizeException("Invalid deck size: current size is ${deck.size}, but it should be greater than 4 to draw cards.")
         }
 
@@ -138,20 +149,6 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         players.value!!.removeAt(0)
     }
 
-    fun debugWorld()
-    {
-        Timber.e("======== Common =========")
-        Timber.d("Current deck: $deck")
-        Timber.d("Current choice: $choice")
-        Timber.e("=========================")
-        Timber.e("======== Players ========")
-        for(p in players.value!!)
-        {
-            p.debugPlayer()
-        }
-        Timber.e("=========================")
-    }
-
     @Throws(GameBusinessLogicException::class)
     fun addPosition(row: Int, col: Int) {
         if(playerPickedPositions.value == null) return
@@ -172,6 +169,20 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
             else -> throw GameBusinessLogicException("Picked positions should never exceed size 2: currently ${playerPickedPositions.value!!.size} (${playerPickedPositions.value!!})")
         }
         playerPickedPositions.postValue(playerPickedPositions.value)
+    }
+
+    fun debugWorld()
+    {
+        Timber.e("======== Common =========")
+        Timber.d("Current deck: $deck")
+        Timber.d("Current choice: $choice")
+        Timber.e("=========================")
+        Timber.e("======== Players ========")
+        for(p in players.value!!)
+        {
+            p.debugPlayer()
+        }
+        Timber.e("=========================")
     }
 
     class DeckSizeException(message: String) : Exception(message)
