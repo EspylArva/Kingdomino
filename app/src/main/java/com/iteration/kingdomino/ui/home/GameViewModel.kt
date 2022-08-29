@@ -55,8 +55,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     val playerPickedPositions = MutableLiveData<MutableList<Pair<Int, Int>>>().apply { value = mutableListOf() }
 
     init {
-
-        Timber.d("Initializing Game...")
+        Timber.i("Initializing Game...")
 
         playerOrder = mutableMapOf(Pair(Player("John Doe"), 1), Pair(Player("Emily Lee"), 2), Pair(Player("Joseph Staline"), 3), Pair(Player("Chris Tabernacle"), 4))
         Timber.d("Players=${playerOrder}")
@@ -122,7 +121,12 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         Timber.i("End of $player's turn. Switching to ${players.value!![0]}'s turn.")
     }
 
-    fun regeneratePlayerList() {
+    /**
+     * Sets players value to the ordered list extracted from playerOrder, based on the previously selected cards
+     * @see players
+     * @see playerOrder
+     */
+    private fun regeneratePlayerList() {
         players.value = playerOrder.entries.stream()
                 .sorted { entry1, entry2 -> entry1.value - entry2.value}
                 .map { entry -> entry.key }
