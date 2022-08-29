@@ -65,7 +65,7 @@ class RecyclerDotIndicator(@ColorInt private val colorActive : Int, @ColorInt pr
     private fun drawHighlights(c: Canvas, indicatorStartX: Float, indicatorPosY: Float, activePosition: Int, progress: Float, itemCount: Int) {
         paint.color = colorActive
         val itemWidth = indicatorItemLength + indicatorItemPadding
-        var highlightStart = indicatorStartX + itemWidth * activePosition
+        val highlightStart = indicatorStartX + itemWidth * activePosition
         if( progress == 0F)
         {
             c.drawCircle(highlightStart, indicatorPosY, indicatorItemLength/2F, paint)
