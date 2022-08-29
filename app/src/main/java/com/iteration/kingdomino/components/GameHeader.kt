@@ -7,34 +7,51 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.allViews
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
 
-class GameHeader @JvmOverloads constructor(
-        ctx : Context,
-        attrs : AttributeSet? = null,
-        defStyleAttr : Int = 0
-) : LinearLayout(ctx, attrs, defStyleAttr)
-{
+class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)
+    : LinearLayout(ctx, attrs, defStyleAttr) {
+
     /**
      * TextViews containing information on player.
      * first:  Player's ID
      * second: Player's score
      */
-    val listPlayerInfo : MutableList<Pair<TextView, TextView>> = mutableListOf()
+    private val listPlayerInfo : MutableList<Pair<TextView, TextView>> = mutableListOf()
     private val listLayouts : MutableList<LinearLayout> = mutableListOf()
 
-
-
     init {
-
         this.orientation = HORIZONTAL
         this.gravity = Gravity.CENTER
+    }
 
-        for(i in 0..3)
+    private fun addSep() {
+        val iterator = listLayouts.iterator()
+        while(iterator.hasNext()) {
+            val view = iterator.next()
+//            if (view.parent != null) {
+//                (view.parent as ViewGroup).removeView(view)
+//            }
+            this.addView(view)
+            if(iterator.hasNext())
+            {
+                val ivSeparator = ImageView(ctx)
+                ivSeparator.background = ResourcesCompat.getDrawable(ctx.resources, R.drawable.ic_baseline_arrow_forward_ios_24, null)
+                this.addView(ivSeparator)
+            }
+        }
+
+
+    }
+
+    fun updatePlayers(players: List<Player>) {
+        this.removeAllViews()
+        listLayouts.clear()
+        listPlayerInfo.clear()
+
+        for(i in players.indices)
         {
             val linearLayout = LinearLayout(ctx)
             val tvPlayerName = TextView(ctx)
@@ -47,40 +64,13 @@ class GameHeader @JvmOverloads constructor(
             linearLayout.gravity = Gravity.CENTER
             linearLayout.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f)
 
-            tvPlayerName.text = "Player $i"
-            tvPlayerScore.text = ctx.getString(R.string.player_score, 0)
+            tvPlayerName.text = players[i].name
+            tvPlayerScore.text = resources.getString(R.string.player_score, players[i].getScore())
 
             listPlayerInfo.add(Pair(tvPlayerName, tvPlayerScore))
             listLayouts.add(linearLayout)
         }
 
-        val iterator = listLayouts.iterator()
-        while(iterator.hasNext())
-        {
-
-            this.addView(iterator.next())
-            if(iterator.hasNext())
-            {
-                val ivSeparator = ImageView(ctx)
-                ivSeparator.background = ResourcesCompat.getDrawable(ctx.resources, R.drawable.ic_baseline_arrow_forward_ios_24, null)
-                this.addView(ivSeparator)
-            }
-        }
-    }
-
-    fun nextPlayer()
-    {
-        val iterator = this.allViews.iterator()
-
-
-//        this.removeViewAt(0)
-
-    }
-
-    fun updatePlayers(players: List<Player>) {
-        for(i in 0..3) {
-            listPlayerInfo[i].first.text = players[i].name
-            listPlayerInfo[i].second.text = resources.getString(R.string.player_score, players[i].getScore())
-        }
+        addSep()
     }
 }

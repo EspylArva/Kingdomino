@@ -14,10 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.components.GameHeader
-import com.iteration.kingdomino.components.RecyclerDotIndicator
-import com.iteration.kingdomino.components.RecyclerViewMargin
-import com.iteration.kingdomino.components.Utils
+import com.iteration.kingdomino.components.*
 import timber.log.Timber
 
 class GameFragment : Fragment() {
@@ -50,19 +47,15 @@ class GameFragment : Fragment() {
 
     private fun setListeners() {
         clHeader.setOnClickListener {
-//            if(vm.deck.size < 5)
-//            {
-//                // FIXME
-//                Toast.makeText(requireContext(), resources.getString(R.string.empty_deck), Toast.LENGTH_SHORT).show()
-//                Timber.e("Game should be over! For debugging purposes, shuffling deck")
-//                vm.setDeck()
-//            }
             vm.drawCards()
             Toast.makeText(requireContext(), resources.getString(R.string.drawing_cards), Toast.LENGTH_SHORT).show()
         }
 
         buttonCancel.setOnClickListener {
-
+            vm.playerCardSelection.value = null
+            vm.playerPickedPositions.value!!.clear()
+            recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
+            recyclerMaps.adapter!!.notifyDataSetChanged()
         }
 
         buttonConfirm.setOnClickListener {
@@ -71,10 +64,11 @@ class GameFragment : Fragment() {
     }
 
     private fun setObservers() {
-        vm.immutablePlayers.forEach { player ->
+        vm.playerOrder.forEach { entry ->
+            val player = entry.key
             // Called each time a card has been played
             player.observe(viewLifecycleOwner, Observer {
-                val playerIndex = vm.immutablePlayers.indexOf(player)
+                val playerIndex = vm.playerOrder.keys.toList().indexOf(player)
                 Timber.d("Obs: $it updated. Refreshing UI (field #$playerIndex).")
                 recyclerMaps.adapter!!.notifyDataSetChanged()
             })
@@ -85,20 +79,25 @@ class GameFragment : Fragment() {
             Timber.d("Obs: Player changed. ${vm.players.value!![0]}'s turn begins")
             clHeader.updatePlayers(vm.players.value!!)
             // Show current player map
-            recyclerMaps.smoothScrollToPosition(vm.immutablePlayers.indexOf(vm.players.value!![0]))
+            recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
         })
 
         // Called each time the choice deck has been refreshed
         vm.choice.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New choice drawn: choice=${vm.choice.value!!}")
-            recyclerChoice.adapter!!.notifyDataSetChanged()
             updateCardHighlighting()
+            recyclerChoice.adapter!!.notifyDataSetChanged()
         })
 
         // Called each time a card in the choice draw has been selected
         vm.playerCardSelection.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New card picked. pick=${vm.playerCardSelection.value}")
             updateCardHighlighting()
+        })
+
+        // Called each time player registers a position
+        vm.playerPickedPositions.observe(viewLifecycleOwner, Observer {
+            Timber.d("Obs: New position picked. pick=${vm.playerPickedPositions.value}")
         })
     }
 
@@ -161,14 +160,13 @@ class GameFragment : Fragment() {
 
         recyclerChoice.setHasFixedSize(true)
         recyclerChoice.adapter = CardChoiceAdapter(vm)
-        val recyclerLayout = LinearLayoutManager(requireContext())
-        recyclerLayout.orientation = LinearLayoutManager.HORIZONTAL
+        val recyclerLayout = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerChoice.layoutManager = recyclerLayout
         recyclerChoice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
 
         recyclerMaps.setHasFixedSize(true)
         recyclerMaps.adapter = PlayerMapAdapter(vm)
-        val recyclerLayout2 = LinearLayoutManager(requireContext())
+        val recyclerLayout2 = AdjustableScrollSpeedLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 125f)
         recyclerLayout2.orientation = LinearLayoutManager.HORIZONTAL
         recyclerMaps.layoutManager = recyclerLayout2
         PagerSnapHelper().attachToRecyclerView(recyclerMaps)

@@ -29,7 +29,7 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Timber.d("onBindViewHolder of CardChoiceAdapter")
+        Timber.v("onBindViewHolder of CardChoiceAdapter")
         val card = vm.choice.value!!.entries.toList()[position].key
 
         holder.lblId.text = card.id.toString()
@@ -55,13 +55,14 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
             if (vm.playerCardSelection.value == null || (vm.playerCardSelection.value != card)) {
                 if (vm.choice.value!![card] == true) { // Card can be played (has not been played yet)
                     vm.playerCardSelection.value = card
+                    Timber.d("${vm.players.value!![0]} selects card=${vm.playerCardSelection.value}")
                 } else {
                     Timber.w("Card $card has already been played by another player this turn (registeredState=${vm.choice.value!![card]})")
                 }
             } else { // Card chosen is the same
+                Timber.d("${vm.players.value!![0]} unselects card=null")
                 vm.playerCardSelection.value = null
             }
-            Timber.d("Currently selected card=${vm.playerCardSelection.value}")
         }
     }
 
