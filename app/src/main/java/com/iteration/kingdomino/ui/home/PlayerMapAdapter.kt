@@ -37,18 +37,19 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         Timber.v("onBindViewHolder of PlayerMapAdapter. position=$position")
         val field = vm.playerOrder.keys.toList()[position].map.field
 
+        displayPlayerMap(field, position, holder)
+    }
 
+    private fun displayPlayerMap(field: MutableList<MutableList<Tile>>, position: Int, holder: ViewHolder) {
         holder.playerMap.removeAllViews()
         val rows = field.size
         val columns = field[0].size
-
         holder.playerMap.rowCount = rows
         holder.playerMap.columnCount = columns
 
         val metrics = DisplayMetrics()
         holder.itemView.context.display?.getRealMetrics(metrics)
         val size = (metrics.widthPixels * 0.1).toInt()
-
 
         for(row in 0 until field.size)
         {
@@ -84,12 +85,14 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
     }
 
     fun showGhost(player: Player, holder: ViewHolder) {
+        Timber.d("Display ghost")
         val positions = vm.playerPickedPositions.value ?: return
         val card = vm.playerCardSelection.value ?: return
 
+        Timber.d("Resetting player map ghosts")
+        displayPlayerMap(player.map.field, vm.currentPlayerIndex, holder)
 
         Timber.d("Displaying ghost of card=$card at positions=$positions")
-
         if(positions.size == 1 && isValidTilePlacement(player, positions, card, 0)) {
             setNewDrawable(card.tile1, positions[0], 0.7f, holder)
         } else if (positions.size == 2 && isValidTilePlacement(player, positions, card, 0, 1)) {
@@ -97,9 +100,19 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
             setNewDrawable(card.tile2, positions[1], 0.7f, holder)
         }
     }
+
+    /**
+     * Sets a new drawable based on a [Tile] for the tile at given coordinates.
+     * The GUI tile is a [ConstraintLayout] containing two [ImageView].
+     *
+     * @param tile tile to display. Contains the drawable information to display.
+     * @param position XY coordinates to populate. X and Y should be contained between 0 and 8.
+     * @param alpha transparency level. Should be between 0 and 1. Default value is 1.
+     * @param holder the ViewHolder containing the cell to change.
+     */
     private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, holder: ViewHolder) {
         val index = position.first*9 + position.second
-        Timber.i("Trying to display ghost @$position. Shooting for index=$index")
+        Timber.v("Trying to display ghost @$position. Shooting for index=$index")
         val clTile = holder.playerMap[index] as ConstraintLayout
 
         clTile.removeAllViews()

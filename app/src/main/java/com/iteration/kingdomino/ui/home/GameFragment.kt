@@ -131,24 +131,21 @@ class GameFragment : Fragment() {
         // Called each time a card in the choice draw has been selected
         vm.playerCardSelection.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New card picked. pick=${vm.playerCardSelection.value}")
-//            val mapAdapter = recyclerMaps.adapter!! as PlayerMapAdapter
-//            mapAdapter.notifyDataSetChanged() // Reset map
-
             updateCardHighlighting()
         })
 
         // Called each time player registers a position
         vm.playerPickedPositions.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New position picked. pick=${vm.playerPickedPositions.value}")
+
+            // Reset map
             val mapAdapter = recyclerMaps.adapter!! as PlayerMapAdapter
-//            mapAdapter.notifyDataSetChanged() // Reset map
-            val viewHolder = recyclerMaps.findViewHolderForAdapterPosition(vm.currentPlayerIndex)
-            if(viewHolder == null) {
-                Timber.w("Could not find ViewHolder for index=${vm.currentPlayerIndex}")
-                return@Observer
-            } else {
-                mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder) // Show ghost
-            }
+
+            // Display ghost
+            val viewHolder = recyclerMaps.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
+            Timber.d("Display ghost @${vm.currentPlayerIndex} field 1")
+            mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder)
+            Timber.d("Display ghost @${vm.currentPlayerIndex} field 2")
         })
     }
 
