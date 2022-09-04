@@ -11,37 +11,55 @@ class Field {
         field.addAll(argField)
     }
 
-    // FIXME : should castle have value 0 or 1?
     val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { nullTile() } }
-    private var domains = HashMap<HashSet<Int>, Tile.Terrain>()
     val width: Int get() = this.field.size
     val height: Int get() = this.field[0].size
 
+    /**
+     * Map representing the field. The field's [Tile]s are grouped by "domains".
+     * Each domain regroups all [Tile]s orthogonally adjacent and of the same [Tile.Terrain] type.
+     * Key: Set<Int>        . Set of [Tile] positions within the field. The position is an integer between 0 and 99. Digit of tens represent X coordinate, digit of units represent Y coordinate.
+     * Value: Tile.Terrain  . [Tile.Terrain] type of the domain.
+     */
+    private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
+
     init {
+        // Sets the middle of the field to be a castle.
+        // FIXME : should castle have value 0 or 1?
         field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
 
+    /**
+     * Computes the [Player]'s score.
+     * Score is computed following this logic:
+     * - Each domain yields an integer value, calculated by multiplying the size of the domain by the number of crowns contained by the domain.
+     * - Each score yielded by a domain is added. The total score is the sum of all yielded domains score.
+     *
+     * @return the [Player]'s total score.
+     */
     fun calculateScore() : Int
     {
-        var score = 0
+        Timber.v("Player's domains=$domains")
+        val score = domains.keys.map { domain ->
+            val crowns = domain.map {
+                val y = it % 10
+                val x = (it - y)/10
+                field[x][y].crown.value
+            }.toList().sum()
+            crowns * domain.size
+        }.toList().sum()
 
-        Timber.v(domains.toString())
-
-        for(domain in domains.keys)
-        {
-            var crowns = 0
-            for(tileId in domain)
-            {
-                val y = tileId % 10
-                val x = (tileId - y)/10
-                crowns += field[x][y].crown.value
-            }
-            score += crowns * domain.size
-        }
-        Timber.d("Computed score is $score")
+        Timber.d("Computing score. score=$score")
         return score
     }
 
+    /**
+     * Adds the given [Card] to the field, at given XY coordinates
+     *
+     * @param card the [Card] to be added to the field.
+     * @param tile1Location the XY coordinates of the [Card]'s first tile.
+     * @param tile2Location the XY coordinates of the [Card]'s second tile.
+     */
     fun addCard(card: Card, tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>) {
         if (isCardLocationValid(tile1Location, tile2Location, card)) {
             addTile(card.tile1, tile1Location)
@@ -52,7 +70,13 @@ class Field {
         }
     }
 
-    private fun addTile(t : Tile, posXY : Pair<Int, Int>)
+    /**
+     * Adds the given [Tile] to the field, at given XY coordinates
+     *
+     * @param tile the [Tile] to be added to the field.
+     * @param posXY the XY coordinates of the [Tile].
+     */
+    private fun addTile(tile : Tile, posXY : Pair<Int, Int>)
     {
         val x = posXY.first; val y = posXY.second
 
@@ -61,12 +85,18 @@ class Field {
         if(!isTileLocationFree(posXY)) throw PlayerFieldException("Tile at $posXY is not free: currently occupied by ${field[x][y]}")
         if(!isFieldSmallEnough(posXY)) throw PlayerFieldException("Playing tile at $posXY would make it exceed max. size 5x5")
 
-        field[x][y] = t
+        field[x][y] = tile
         addToDomains(x, y)
 
-        Timber.d("Success playing tile $t at $posXY")
+        Timber.v("Success playing tile $tile at $posXY")
     }
 
+    /**
+     * Adds the tile at given coordinates the map of [domains].
+     *
+     * @param x the X coordinate of the tile to add to the map of [domains].
+     * @param y the Y coordinate of the tile to add to the map of [domains].
+     */
     private fun addToDomains(x: Int, y: Int) {
         // Checking which domain to add to...
         val neighboursId = getNeighboursId(x, y)
@@ -77,14 +107,7 @@ class Field {
         }
         // Similar terrain found, adding to the first domain
         else {
-            for(neighbourId in neighboursId)
-            {
-                domains.forEach { entry ->
-                    if(entry.key.contains(neighbourId)) {
-                        entry.key.add(x*10 + y)
-                    }
-                }
-            }
+            domains.filterKeys { key -> key.containsAll(neighboursId) }.forEach { entry -> entry.key.add(x*10 + y) }
         }
         // Checking if two domains should be merged
         val domainsContainingXY = domains.filter { entry -> entry.key.contains(x*10 + y) }

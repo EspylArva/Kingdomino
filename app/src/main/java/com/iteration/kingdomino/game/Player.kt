@@ -13,10 +13,8 @@ class Player(val name : String) : MutableLiveData<Player>() {
         postValue(this)
     }
 
-    fun getScore() : Int
-    {
-        return map.calculateScore()
-    }
+    val score: Int
+        get() = map.calculateScore()
 
     fun computeChoices(card : Card) : List<Pair<Int, Int>>
     {
@@ -34,12 +32,12 @@ class Player(val name : String) : MutableLiveData<Player>() {
     }
 
     fun debugPlayer() {
-        Timber.d("Player $name currently has a score of ${getScore()}.")
+        Timber.d("Player $name currently has a score of ${score}.")
         Timber.d("Representation of their board:\n$map")
         // TODO
     }
 
     override fun toString(): String {
-        return "[Player: name=$name currentScore=${getScore()}]"
+        return "[Player: name=$name currentScore=${score}]"
     }
 }

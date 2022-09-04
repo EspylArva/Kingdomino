@@ -65,7 +65,7 @@ class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeS
             linearLayout.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f)
 
             tvPlayerName.text = players[i].name
-            tvPlayerScore.text = resources.getString(R.string.player_score, players[i].getScore())
+            tvPlayerScore.text = resources.getString(R.string.player_score, players[i].score)
 
             listPlayerInfo.add(Pair(tvPlayerName, tvPlayerScore))
             listLayouts.add(linearLayout)
