@@ -16,8 +16,9 @@
     <string name="error_play_tile">Could not play selected tile at this location</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
-    <string name="wrong_field">Cannot play on another player\'s field. Please play on your own field.</string>
+    <string name="error_wrong_field">Cannot play on another player\'s field. Please play on your own field.</string>
     <string name="confirmPlayCard">Are you sure you want to play card %1$d at the displayed location?</string>
+    <string name="error_select_card">Card %1$d has already been used this turn. Cannot re-use a card. Select another one.</string>
 
 
 </resources>

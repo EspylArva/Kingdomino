@@ -12,7 +12,7 @@ class Field {
     }
 
     // FIXME : should castle have value 0 or 1?
-    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile(Tile.Terrain.NULL, Tile.Crown.ZERO) } }
+    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { nullTile() } }
     private var domains = HashMap<HashSet<Int>, Tile.Terrain>()
     val width: Int get() = this.field.size
     val height: Int get() = this.field[0].size

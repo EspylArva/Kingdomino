@@ -87,15 +87,9 @@ class GameFragment : Fragment() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage(context?.getString(R.string.confirmPlayCard, vm.playerCardSelection.value!!.id))
                     .setCancelable(false)
-                    .setPositiveButton("Yes") { _, _ ->
-                        vm.endPlayerTurn()
-                    }
-                    .setNegativeButton("No") { dialog, _ ->
-                        // Dismiss the dialog
-                        dialog.dismiss()
-                    }
-            val alert = builder.create()
-            alert.show()
+                    .setPositiveButton("Yes") { _, _ -> vm.endPlayerTurn() }
+                    .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
+            builder.create().show()
         }
     }
 
@@ -137,15 +131,10 @@ class GameFragment : Fragment() {
         // Called each time player registers a position
         vm.playerPickedPositions.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New position picked. pick=${vm.playerPickedPositions.value}")
-
-            // Reset map
-            val mapAdapter = recyclerMaps.adapter!! as PlayerMapAdapter
-
             // Display ghost
+            val mapAdapter = recyclerMaps.adapter!! as PlayerMapAdapter
             val viewHolder = recyclerMaps.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
-            Timber.d("Display ghost @${vm.currentPlayerIndex} field 1")
             mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder)
-            Timber.d("Display ghost @${vm.currentPlayerIndex} field 2")
         })
     }
 

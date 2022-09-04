@@ -7,10 +7,13 @@ data class Tile(val type : Terrain, val crown : Crown) {
 
     companion object
     {
+        /**
+         * List of [Terrain.CASTLE] drawables. There are four different colors of [Terrain.CASTLE], thus, four different drawables.
+         */
         val CASTLES = listOf(R.drawable.ic_castle_red, R.drawable.ic_castle_blue, R.drawable.ic_castle_orange, R.drawable.ic_castle_green)
     }
-    override fun toString() = "[$type (${crown.value})]"
 
+    override fun toString() = "[$type (${crown.value})]"
 
     enum class Terrain(val drawableId: Int) {
         CASTLE(0),

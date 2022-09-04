@@ -48,13 +48,12 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     var playerOrder : MutableMap<Player, Int>
 
     /**
-     * Gets the current player.
+     * Gets the current player. // FIXME: replace usages of players.value!![0] by currentPlayer
      */
     val currentPlayer : Player?
         get() = players.value!!.first()
 
     /**
-     * Gets the cu
      * FIXME: see if this works properly? Is index modified when a card is played?
      */
     val currentPlayerIndex : Int

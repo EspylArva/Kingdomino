@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.findFragment
@@ -15,6 +16,7 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
+import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
 import java.lang.Exception
 
@@ -33,13 +35,8 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
         val card = vm.choice.value!!.entries.toList()[position].key
 
         holder.lblId.text = card.id.toString()
-
-        holder.imgCrowns1.setBackground(card.tile1.crown.drawableId)
-        holder.imgType1.setBackground(card.tile1.type.drawableId)
-        holder.imgCrowns2.setBackground(card.tile2.crown.drawableId)
-        holder.imgType2.setBackground(card.tile2.type.drawableId)
-
-        setCardSize(holder)
+        holder.setDrawables(card)
+        holder.setSize()
 
         holder.itemView.setOnClickListener {
             Timber.d(
@@ -55,30 +52,17 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
             if (vm.playerCardSelection.value == null || (vm.playerCardSelection.value != card)) {
                 if (vm.choice.value!![card] == true) { // Card can be played (has not been played yet)
                     vm.playerCardSelection.value = card
-                    Timber.d("${vm.players.value!![0]} selects card=${vm.playerCardSelection.value}")
                 } else {
                     Timber.w("Card $card has already been played by another player this turn (registeredState=${vm.choice.value!![card]})")
+                    Toast.makeText(holder.itemView.context, holder.itemView.context.getString(R.string.error_select_card, card.id), Toast.LENGTH_SHORT).show()
                 }
             } else { // Card chosen is the same
-                Timber.d("${vm.players.value!![0]} unselects card=null")
                 vm.playerCardSelection.value = null
             }
         }
     }
 
-    private fun setCardSize(holder: ViewHolder) {
-        val metrics = DisplayMetrics()
-        holder.itemView.context.display?.getRealMetrics(metrics)
-        val size = (metrics.widthPixels * 0.2).toInt()
-        holder.clFirst.layoutParams.width  = size; holder.clFirst.layoutParams.height  = size
-        holder.clSecond.layoutParams.width = size; holder.clSecond.layoutParams.height = size
-        holder.clSecond.requestLayout()
-    }
 
-
-    private fun ImageView.setBackground(drawableId: Int) {
-        this.background = if (drawableId != 0) ResourcesCompat.getDrawable(this.resources, drawableId, null) else null
-    }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -93,6 +77,41 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
         val imgType2 : ImageView = itemView.findViewById(R.id.img_card_type_two)
 
         val imgOverlay : ImageView = itemView.findViewById(R.id.img_card_overlay)
+
+        /**
+         * Sets the [ViewHolder] drawables according to the given card.
+         * A [ViewHolder] contains two sets of two [ImageView].
+         * Each set of [ImageView] represents a [Tile], with its [Tile.Terrain] and [Tile.Crown].
+         *
+         * @param card the [Card] whose [Tile.Terrain] and [Tile.Crown] will be displayed.
+         */
+        fun setDrawables(card: Card) {
+            imgCrowns1.setBackground(card.tile1.crown.drawableId)
+            imgType1.setBackground(card.tile1.type.drawableId)
+            imgCrowns2.setBackground(card.tile2.crown.drawableId)
+            imgType2.setBackground(card.tile2.type.drawableId)
+        }
+
+        /**
+         * Sets the [ViewHolder] components to a square shape.
+         */
+        fun setSize() {
+            val metrics = DisplayMetrics()
+            itemView.context.display?.getRealMetrics(metrics)
+            val size = (metrics.widthPixels * 0.2).toInt()
+            clFirst.layoutParams.width  = size; clFirst.layoutParams.height  = size
+            clSecond.layoutParams.width = size; clSecond.layoutParams.height = size
+            clSecond.requestLayout()
+        }
+
+        /**
+         * Sets background for the [ImageView], using given drawable id.
+         *
+         * @param drawableId the id of the drawable to apply to the [ImageView].
+         */
+        private fun ImageView.setBackground(drawableId: Int) {
+            this.background = if (drawableId != 0) ResourcesCompat.getDrawable(this.resources, drawableId, null) else null
+        }
     }
 
 }
