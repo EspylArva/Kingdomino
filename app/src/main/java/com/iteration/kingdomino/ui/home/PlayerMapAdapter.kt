@@ -138,6 +138,9 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
      * @return [Boolean] indicating whether the ghost placement is valid or not
      */
     private fun isValidTilePlacement(player: Player, positions: MutableList<Pair<Int, Int>>, card: Card) : Boolean {
+        if(vm.playerPickedPositions.value!!.size == 0){
+            return true
+        }
         for(index in 0 until vm.playerPickedPositions.value!!.size) {
             val tilePosValid = player.map.isTileLocationFree(positions[index])
             val smallEnough = player.map.isFieldSmallEnough(positions[index])

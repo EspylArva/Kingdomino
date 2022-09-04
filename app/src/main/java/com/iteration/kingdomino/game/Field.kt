@@ -12,6 +12,9 @@ class Field {
     }
 
     val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { nullTile() } }
+    private val trimmedField
+        get() = field.trimmed()
+
     val width: Int get() = this.field.size
     val height: Int get() = this.field[0].size
 
@@ -99,7 +102,7 @@ class Field {
      */
     private fun addToDomains(x: Int, y: Int) {
         // Checking which domain to add to...
-        val neighboursId = getNeighboursId(x, y)
+        val neighboursId = getNeighboursPosition(x, y)
         // No similar terrain, means only a castle is nearby
         if(neighboursId.isEmpty()) {
             val newSet = HashSet<Int>(); newSet.add(x*10 + y)
@@ -107,7 +110,9 @@ class Field {
         }
         // Similar terrain found, adding to the first domain
         else {
-            domains.filterKeys { key -> key.containsAll(neighboursId) }.forEach { entry -> entry.key.add(x*10 + y) }
+            neighboursId.forEach {
+                domains.filterKeys { key -> key.contains(it) }.forEach { entry -> entry.key.add(x*10 + y) }
+            }
         }
         // Checking if two domains should be merged
         val domainsContainingXY = domains.filter { entry -> entry.key.contains(x*10 + y) }
@@ -119,35 +124,14 @@ class Field {
         }
     }
 
-
-    private fun trimmedField(field : MutableList<MutableList<Tile>>) : Field
-    {
-        val trimmedField = fieldClone() // clone the field
-        for(i in 8 downTo 0) {
-            if(field[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
-                trimmedField.removeAt(i)
-            }
-            if(field.all { row -> row[i].type == Tile.Terrain.NULL }) {
-                trimmedField.forEach { row -> row.removeAt(i) }
-            }
-        }
-        return Field(trimmedField)
-    }
-
-    fun trimmedField() = trimmedField(field)
-
-    private fun fieldClone(): MutableList<MutableList<Tile>> {
-        return field.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
-    }
-
     fun isFieldSmallEnough(position: Pair<Int, Int>) : Boolean {
         val x = position.first
         val y = position.second
-        val futureField = fieldClone()
-        futureField[x][y] = Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE)
-        val trimmed = trimmedField(futureField)
-        Timber.v("Checking if the field does not exceed 5x5 even after adding a tile at ${x}x$y: currentSize=${trimmedField().width}x${trimmedField().height}. futureSize=${trimmed.width}x${trimmed.height}")
-        return (trimmed.width < 6) and (trimmed.height < 6)
+        val trimmedFuture = field.clone()
+                .addAt(x, y, Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE))
+                .trimmed()
+        Timber.v("Checking if the field does not exceed 5x5 even after adding a tile at ${x}x$y: currentSize=${trimmedField.width}x${trimmedField.height}. futureSize=${trimmedFuture.width}x${trimmedFuture.height}")
+        return (trimmedFuture.width < 6) and (trimmedFuture.height < 6)
     }
 
     fun isValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
@@ -182,7 +166,15 @@ class Field {
     
     fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) = isCardTilesAdjacent(tile1Location, tile2Location) && isNeighbourValid(tile1Location, tile2Location, card)
 
-    private fun getNeighboursId(x: Int, y: Int): List<Int> {
+    /**
+     * Gets the list of the positions of [Tile] neighbouring the given XY coordinates.
+     * The position is an integer between 0 and 99. Digit of tens represent X coordinate, digit of units represent Y coordinate.
+     *
+     * @param x the X coordinate.
+     * @param y the Y coordinate.
+     * @return the list of neighbour positions.
+     */
+    private fun getNeighboursPosition(x: Int, y: Int): List<Int> {
         val neighbours = mutableListOf<Int>()
         if(field[x][y].type != Tile.Terrain.NULL)
         {
@@ -194,9 +186,17 @@ class Field {
         return neighbours
     }
 
+    /**
+     * Gets a set of [Tile] [Tile.Terrain] type neighbouring the given XY coordinates.
+     * As the return type is a [Set], amount of neighbours of the same type will not be reflected.
+     *
+     * @param x the X coordinate.
+     * @param y the Y coordinate.
+     * @return the set of neighbouring [Tile.Terrain] type.
+     */
     private fun getNeighboursTypes(x : Int, y : Int) : Set<Tile.Terrain>
     {
-        val neighbours = HashSet<Tile.Terrain>()
+        val neighbours = mutableSetOf<Tile.Terrain>()
         if(y > 0) neighbours.add(field[x][y-1].type)
         if(y < 8) neighbours.add(field[x][y+1].type)
         if(x > 0) neighbours.add(field[x-1][y].type)
@@ -220,12 +220,36 @@ class Field {
     }
 
     override fun toString(): String {
-        return mapAsString(trimmedField(field).field)
+        return mapAsString(trimmedField.field)
     }
 
     class PlayerFieldException(message : String) : Exception(message) {
-        private val PLAYER_FIELD_EXCEPTION_HEADER = "Invalid action: "
+        private val playerFieldExceptionPrefix = "Invalid action: "
         override val message: String?
-            get() = PLAYER_FIELD_EXCEPTION_HEADER + super.message
+            get() = playerFieldExceptionPrefix + super.message
     }
+
 }
+
+private fun MutableList<MutableList<Tile>>.addAt(x: Int, y: Int, tile: Tile) : MutableList<MutableList<Tile>> {
+    this[x][y] = tile
+    return this
+}
+
+private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile>> {
+    return this.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
+}
+
+private fun MutableList<MutableList<Tile>>.trimmed(): Field {
+    val trimmedField = this.clone()// fieldClone() // clone the field
+    for(i in 8 downTo 0) {
+        if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
+            trimmedField.removeAt(i)
+        }
+        if(this.all { row -> row[i].type == Tile.Terrain.NULL }) {
+            trimmedField.forEach { row -> row.removeAt(i) }
+        }
+    }
+    return Field(trimmedField)
+}
+
