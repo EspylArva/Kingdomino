@@ -1,20 +1,13 @@
-package com.iteration.kingdomino.ui.home
+package com.iteration.kingdomino.ui.game
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.iteration.kingdomino.R
-import com.iteration.kingdomino.components.LoopingList
-import com.iteration.kingdomino.components.loopingListOf
 import com.iteration.kingdomino.csvreader.CSVReader
 import com.iteration.kingdomino.game.*
 import timber.log.Timber
 import java.util.*
 import java.util.stream.Collectors.toList
-import java.util.stream.Collectors.toMap
 import kotlin.collections.LinkedHashMap
 
 class GameViewModel(val app : Application) : AndroidViewModel(app) {

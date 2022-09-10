@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iteration.kingdomino.R
 
-class SlideshowFragment : Fragment() {
+class AppendixFragment : Fragment() {
 
-    private lateinit var slideshowViewModel: SlideshowViewModel
+    private lateinit var appendixViewModel: AppendixViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        slideshowViewModel =
-                ViewModelProvider(this).get(SlideshowViewModel::class.java)
+        appendixViewModel =
+                ViewModelProvider(this).get(AppendixViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_appendix, container, false)
         val textView: TextView = root.findViewById(R.id.text_slideshow)
-        slideshowViewModel.text.observe(viewLifecycleOwner, Observer {
+        appendixViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

@@ -1,24 +1,19 @@
-package com.iteration.kingdomino.ui.home
+package com.iteration.kingdomino.ui.game
 
-import android.content.Context
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.findFragment
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
-import java.lang.Exception
 
 class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

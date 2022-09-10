@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iteration.kingdomino.R
 
-class GalleryFragment : Fragment() {
+class MainMenuFragment : Fragment() {
 
-    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var mainMenuViewModel: MainMenuViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        galleryViewModel =
-                ViewModelProvider(this).get(GalleryViewModel::class.java)
+        mainMenuViewModel =
+                ViewModelProvider(this).get(MainMenuViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_menu, container, false)
         val textView: TextView = root.findViewById(R.id.text_gallery)
-        galleryViewModel.text.observe(viewLifecycleOwner, Observer {
+        mainMenuViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

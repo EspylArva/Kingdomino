@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.ui.home
+package com.iteration.kingdomino.ui.game
 
 import android.annotation.SuppressLint
 import android.util.DisplayMetrics

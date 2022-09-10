@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.ui.home
+package com.iteration.kingdomino.ui.game
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -208,7 +208,7 @@ class GameFragment : Fragment() {
      * @return the root view
      */
     private fun initViews(inflater: LayoutInflater, container: ViewGroup?): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_game, container, false)
         recyclerChoice = root.findViewById(R.id.recycler_card_choice)
         recyclerMaps = root.findViewById(R.id.recycler_player_field)
         clHeader = root.findViewById(R.id.cl_player_info)
