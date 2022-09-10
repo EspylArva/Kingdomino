@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
+import timber.log.Timber
 
 class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)
     : LinearLayout(ctx, attrs, defStyleAttr) {
@@ -46,7 +47,7 @@ class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeS
 
     }
 
-    fun updatePlayers(players: List<Player>) {
+    fun updatePlayers(players: List<Player>, currentPlayer: Player) {
         this.removeAllViews()
         listLayouts.clear()
         listPlayerInfo.clear()
@@ -59,6 +60,10 @@ class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeS
 
             linearLayout.addView(tvPlayerName)
             linearLayout.addView(tvPlayerScore)
+            if(currentPlayer == players[i]) {
+                Timber.e("Current Player !!!")
+                linearLayout.background = ResourcesCompat.getDrawable(linearLayout.resources, R.drawable.golden_glow, null) // FIXME Test for highlighting current player
+            }
 
             linearLayout.orientation = VERTICAL
             linearLayout.gravity = Gravity.CENTER
