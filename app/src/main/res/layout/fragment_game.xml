@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.GameFragment">
+    tools:context=".ui.game.GameFragment">
 
     <com.iteration.kingdomino.components.GameHeader
         android:id="@+id/cl_player_info"

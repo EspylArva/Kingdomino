@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.ui.slideshow
+package com.iteration.kingdomino.ui.appendix
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

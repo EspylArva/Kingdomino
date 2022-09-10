@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.ui.gallery
+package com.iteration.kingdomino.ui.menu
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

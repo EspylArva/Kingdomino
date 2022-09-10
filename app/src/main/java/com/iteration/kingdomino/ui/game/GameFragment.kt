@@ -110,7 +110,7 @@ class GameFragment : Fragment() {
         // Player finished his turn (players.cycle() finished)
         vm.players.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: Player changed. ${vm.players.value!![0]}'s turn begins")
-            clHeader.updatePlayers(vm.players.value!!)
+            clHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
             // Show current player map
             recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
         })
@@ -229,7 +229,7 @@ class GameFragment : Fragment() {
         recyclerMaps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
 
         // Update player information and order in the [clHeader]
-        clHeader.updatePlayers(vm.players.value!!)
+        clHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
 
         return root
     }
