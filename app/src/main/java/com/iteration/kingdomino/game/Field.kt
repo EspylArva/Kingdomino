@@ -212,7 +212,7 @@ class Field {
         {
             for(col in 0 until field[row].size)
             {
-                mapRepresentation += field[row][col].type.toString().elementAt(0).toUpperCase()
+                mapRepresentation += field[row][col].type.toString().elementAt(0).uppercaseChar()
             }
             mapRepresentation += '\n'
         }
