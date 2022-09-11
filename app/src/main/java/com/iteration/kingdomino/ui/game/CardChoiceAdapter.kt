@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -93,6 +94,7 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
         fun setSize() {
             val metrics = DisplayMetrics()
             itemView.context.display?.getRealMetrics(metrics)
+//            WindowManager.getCurrentWindowMetrics()
             val size = (metrics.widthPixels * 0.2).toInt()
             clFirst.layoutParams.width  = size; clFirst.layoutParams.height  = size
             clSecond.layoutParams.width = size; clSecond.layoutParams.height = size
