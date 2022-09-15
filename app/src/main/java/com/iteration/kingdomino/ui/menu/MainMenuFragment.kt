@@ -10,29 +10,64 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.iteration.kingdomino.R
 import timber.log.Timber
 
 class MainMenuFragment : Fragment() {
 
     private lateinit var mainMenuViewModel: MainMenuViewModel
+    private lateinit var buttonNewGame : Button
+    private lateinit var buttonContinueGame : Button
+    private lateinit var buttonSettings : Button
+    private lateinit var buttonRules : Button
+    private lateinit var buttonCredits : Button
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        mainMenuViewModel =
-                ViewModelProvider(this).get(MainMenuViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_menu, container, false)
-
-        val btn_appendix = root.findViewById<Button>(R.id.btn_rules)
-
-        btn_appendix.setOnClickListener {
-            Timber.d("Navigating to appendix")
-            root.findNavController().navigate(R.id.nav_appendix)
-        }
+        mainMenuViewModel = ViewModelProvider(this).get(MainMenuViewModel::class.java)
+        val root = initView(inflater, container)
+        initListeners()
+        initObservers()
 
         return root
     }
+
+    private fun initListeners() {
+
+        buttonContinueGame.setOnClickListener {
+            findNavController().navigate(R.id.nav_game)
+        }
+
+        buttonRules.setOnClickListener {
+            val action = MainMenuFragmentDirections.actionMenuToAppendix()
+            action.pageContent = R.raw.rules
+            findNavController().navigate(action)
+        }
+
+        buttonCredits.setOnClickListener {
+            val action = MainMenuFragmentDirections.actionMenuToAppendix()
+            action.pageContent = R.raw.readme
+            findNavController().navigate(action)
+        }
+
+    }
+
+    private fun initObservers() {}
+
+    private fun initView(inflater: LayoutInflater, container: ViewGroup?): View? {
+        val root = inflater.inflate(R.layout.fragment_menu, container, false)
+
+        buttonNewGame = root.findViewById(R.id.btn_new_game)
+        buttonContinueGame = root.findViewById(R.id.btn_continue_game)
+        buttonSettings = root.findViewById(R.id.btn_settings)
+        buttonRules = root.findViewById(R.id.btn_rules)
+        buttonCredits = root.findViewById(R.id.btn_credits)
+
+        return root
+    }
+
 }

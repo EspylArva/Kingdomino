@@ -9,7 +9,11 @@
         android:id="@+id/nav_menu"
         android:name="com.iteration.kingdomino.ui.menu.MainMenuFragment"
         android:label="@string/menu_main_menu"
-        tools:layout="@layout/fragment_menu" />
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menu_to_appendix"
+            app:destination="@id/nav_appendix"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_game"
@@ -21,5 +25,10 @@
         android:id="@+id/nav_appendix"
         android:name="com.iteration.kingdomino.ui.appendix.AppendixFragment"
         android:label="@string/menu_appendix"
-        tools:layout="@layout/fragment_appendix" />
+        tools:layout="@layout/fragment_appendix">
+        <argument
+            android:name="page_content"
+            android:defaultValue="0"
+            app:argType="integer"/>
+    </fragment>
 </navigation>

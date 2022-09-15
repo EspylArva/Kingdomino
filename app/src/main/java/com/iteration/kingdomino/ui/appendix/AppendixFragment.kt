@@ -9,13 +9,18 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.MimeTypeMap
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RuleSetMarkFlavourDescriptor
+import com.iteration.kingdomino.ui.menu.MainMenuFragment
+import com.iteration.kingdomino.ui.menu.MainMenuFragmentDirections
 import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
@@ -26,22 +31,32 @@ import java.util.stream.Collectors.toList
 class AppendixFragment : Fragment() {
 
     private lateinit var appendixViewModel: AppendixViewModel
+    private lateinit var webView: WebView
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        appendixViewModel =
-                ViewModelProvider(this).get(AppendixViewModel::class.java)
+        appendixViewModel = ViewModelProvider(this).get(AppendixViewModel::class.java)
+        val root = initView(inflater, container)
+        initListeners()
+        initObservers()
+        return root
+    }
+
+    private fun initListeners() { }
+
+    private fun initObservers() {}
+
+    private fun initView(inflater: LayoutInflater, container: ViewGroup?): View? {
         val root = inflater.inflate(R.layout.fragment_appendix, container, false)
 
-        val lbl: WebView = root.findViewById(R.id.lbl_rules_html)
+        webView = root.findViewById(R.id.webview_html)
 
-        Timber.i("=== Starting parsing Kingdomino rules ===")
-
-        val resourceName = resources.getResourceName(R.raw.rules)
-        resources.openRawResource(R.raw.rules).use {
+        val args: AppendixFragmentArgs by navArgs()
+        val resourceName = resources.getResourceName(args.pageContent)
+        resources.openRawResource(args.pageContent).use {
             val text = it.reader().readLines().joinToString("\r\n")
             Timber.d("Parsed this from resource=[$resourceName@${R.raw.rules}]:\n$text")
             val flavour = RuleSetMarkFlavourDescriptor()
@@ -50,11 +65,9 @@ class AppendixFragment : Fragment() {
             val html = HtmlGenerator(text, parsedTree, flavour).generateHtml()
 
             Timber.d("HTML: $html")
-            lbl.loadDataWithBaseURL("file:///android_res/drawable/", html, "text/html", "UTF-8", null)
-
-            // https://stackoverflow.com/questions/50669744/android-best-way-to-display-html-text
-
+            webView.loadDataWithBaseURL("file:///android_res/drawable/", html, "text/html", "UTF-8", null)
         }
+
 
         return root
     }
