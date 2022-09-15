@@ -1,5 +1,7 @@
 # Kingdomino
+
 ## Presentation
+
 ### The tabletop game
 Kingdomino is a strategic free-for-all battle for territory management, where players compete with each other to build the wealthiest kingdom.
 As the game editor describes it:
