@@ -1,13 +1,11 @@
 package com.iteration.kingdomino.ui.game
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ListAdapter
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -16,11 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.*
-import org.apache.commons.lang3.Streams
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.*
 import java.util.stream.Collectors.toList
 
 class GameFragment : Fragment() {
@@ -77,8 +75,7 @@ class GameFragment : Fragment() {
      */
     private fun setListeners() {
         clHeader.setOnClickListener {
-            vm.drawCards()
-            Toast.makeText(requireContext(), resources.getString(R.string.drawing_cards), Toast.LENGTH_SHORT).show()
+            vm.deckSize.postValue(0) // FIXME: debugging purposes. Displays to end result.
         }
 
         buttonCancel.setOnClickListener {
@@ -144,22 +141,10 @@ class GameFragment : Fragment() {
 
         vm.deckSize.observe(viewLifecycleOwner) {
             if(it == 0) {
-                val players : Array<String> = vm.playerOrder.keys.stream()
-                    .sorted { p1, p2 -> p2.score - p1.score }
-                    .map { player -> "Player ${player.name} : ${player.score}" }
-                    .collect(toList()).toTypedArray()
-                MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
-                    .setTitle("Final Results")
-                    .setItems(players) { _, _ -> }
-                    .setNegativeButton("Dismiss") { dialog, which ->
-                        dialog.dismiss()
-                        // Respond to negative button press
-                    }
-                    .setPositiveButton("New Game") { dialog, which ->
-                        Timber.i("Starting a new game")
-                        Toast.makeText(requireContext(), "Starting a new game", Toast.LENGTH_SHORT).show()
-                    }
-                    .show()
+                val players = vm.playerOrder.keys.stream().map { player -> Pair(player, vm.playerOrder.keys.indexOf(player)) }.collect(toList())
+                players.sortByDescending { pair -> pair.first.score }
+                // FIXME: second argument should be list of modifiers (game mods)
+                ScoreFragment(LocalDateTime.now(), listOf(), players).show(childFragmentManager, ScoreFragment.TAG)
             }
         }
     }
