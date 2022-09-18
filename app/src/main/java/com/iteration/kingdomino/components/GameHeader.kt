@@ -1,24 +1,15 @@
 package com.iteration.kingdomino.components
 
 import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.marginTop
 import androidx.core.view.setPadding
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
-import timber.log.Timber
 
 
 class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)

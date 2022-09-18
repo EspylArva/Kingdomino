@@ -4,11 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.iteration.kingdomino.csvreader.CSVReader
-import com.iteration.kingdomino.game.*
+import com.iteration.kingdomino.game.Card
+import com.iteration.kingdomino.game.Player
 import timber.log.Timber
 import java.util.*
 import java.util.stream.Collectors.toList
-import kotlin.collections.LinkedHashMap
 
 class GameViewModel(val app : Application) : AndroidViewModel(app) {
 

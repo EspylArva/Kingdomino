@@ -1,18 +1,13 @@
 package com.iteration.kingdomino.ui.settings
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.switchmaterial.SwitchMaterial
+import androidx.fragment.app.Fragment
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.FragmentSettingsBinding
-import com.iteration.kingdomino.ui.menu.MainMenuFragmentDirections
 
 class SettingsFragment : Fragment() {
 

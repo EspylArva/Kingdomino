@@ -1,8 +1,6 @@
 package com.iteration.kingdomino.components;
 
 import android.content.Context
-import android.graphics.PointF
-import android.util.AttributeSet
 import android.util.DisplayMetrics
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller

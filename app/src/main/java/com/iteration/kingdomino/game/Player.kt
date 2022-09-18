@@ -2,8 +2,6 @@ package com.iteration.kingdomino.game
 
 import androidx.lifecycle.MutableLiveData
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.HashMap
 
 class Player(val name : String) : MutableLiveData<Player>() {
     val map = Field()

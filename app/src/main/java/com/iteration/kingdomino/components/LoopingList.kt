@@ -1,8 +1,6 @@
 package com.iteration.kingdomino.components;
 
 import androidx.lifecycle.MutableLiveData
-import timber.log.Timber
-import java.util.function.Consumer
 
 
 class LoopingList<T> internal constructor(private var array: Array<Any?>) : MutableLiveData<ArrayList<T>>() {

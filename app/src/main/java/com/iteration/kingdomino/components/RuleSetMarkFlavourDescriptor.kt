@@ -1,19 +1,15 @@
 package com.iteration.kingdomino.components
 
 import org.intellij.markdown.IElementType
-import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.MarkdownElementTypes
+import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
-import org.intellij.markdown.ast.findChildOfType
 import org.intellij.markdown.ast.getTextInNode
-import org.intellij.markdown.flavours.MarkdownFlavourDescriptor
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.*
-import org.intellij.markdown.html.entities.EntityConverter
 import org.intellij.markdown.lexer.MarkdownLexer
 import org.intellij.markdown.lexer._MarkdownLexer
 import org.intellij.markdown.parser.LinkMap
-import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.sequentialparsers.EmphasisLikeParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager

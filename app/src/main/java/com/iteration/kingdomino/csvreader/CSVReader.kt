@@ -6,8 +6,6 @@ import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Tile
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import timber.log.Timber
-import java.io.FileReader
 import java.io.InputStreamReader
 import java.util.*
 
