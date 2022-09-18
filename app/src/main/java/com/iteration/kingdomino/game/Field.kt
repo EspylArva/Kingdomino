@@ -1,6 +1,7 @@
 package com.iteration.kingdomino.game
 
 import timber.log.Timber
+import java.util.stream.Collectors.toList
 
 class Field {
 
@@ -25,6 +26,12 @@ class Field {
      * Value: Tile.Terrain  . [Tile.Terrain] type of the domain.
      */
     private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
+
+    val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.collect(toList()).size
+    val castleCentered: Boolean get() {
+        val domainSize = trimmedField.field.size
+        return trimmedField.field[domainSize/2][domainSize/2].type == Tile.Terrain.CASTLE
+    }
 
     init {
         // Sets the middle of the field to be a castle.
