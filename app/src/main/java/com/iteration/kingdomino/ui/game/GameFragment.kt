@@ -89,8 +89,8 @@ class GameFragment : Fragment() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage(context?.getString(R.string.confirmPlayCard, vm.playerCardSelection.value!!.id))
                     .setCancelable(false)
-                    .setPositiveButton("Yes") { _, _ -> vm.endPlayerTurn() }
-                    .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
+                    .setPositiveButton(resources.getString(R.string.yes)) { _, _ -> vm.endPlayerTurn() }
+                    .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         }
     }
