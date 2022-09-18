@@ -26,9 +26,7 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return vm.playerOrder.size
-    }
+    override fun getItemCount() = vm.playerOrder.size
 
     @SuppressLint("ShowToast")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

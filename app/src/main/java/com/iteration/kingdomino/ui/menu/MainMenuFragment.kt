@@ -38,9 +38,13 @@ class MainMenuFragment : Fragment() {
 
     private fun initListeners() {
 
+        // TODO: buttonNewGame.setOnClickListener
+
         buttonContinueGame.setOnClickListener {
             findNavController().navigate(R.id.nav_game)
         }
+
+        // TODO: buttonSettings.setOnClickListener
 
         buttonRules.setOnClickListener {
             val action = MainMenuFragmentDirections.actionMenuToAppendix()
