@@ -1,11 +1,13 @@
 package com.iteration.kingdomino.ui.game
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ListAdapter
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -14,9 +16,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.*
+import org.apache.commons.lang3.Streams
 import timber.log.Timber
+import java.util.stream.Collectors.toList
 
 class GameFragment : Fragment() {
 
@@ -100,27 +105,27 @@ class GameFragment : Fragment() {
         vm.playerOrder.forEach { entry ->
             val player = entry.key
             // Called each time a card has been played
-            player.observe(viewLifecycleOwner, Observer {
+            player.observe(viewLifecycleOwner) {
                 val playerIndex = vm.playerOrder.keys.toList().indexOf(player)
                 Timber.d("Obs: $it updated. Refreshing UI (field #$playerIndex).")
                 recyclerMaps.adapter!!.notifyDataSetChanged()
-            })
+            }
         }
 
         // Player finished his turn (players.cycle() finished)
-        vm.players.observe(viewLifecycleOwner, Observer {
+        vm.players.observe(viewLifecycleOwner) {
             Timber.d("Obs: Player changed. ${vm.players.value!![0]}'s turn begins")
             clHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
             // Show current player map
             recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
-        })
+        }
 
         // Called each time the choice deck has been refreshed
-        vm.choice.observe(viewLifecycleOwner, Observer {
+        vm.choice.observe(viewLifecycleOwner) {
             Timber.d("Obs: New choice drawn: choice=${vm.choice.value!!}")
             updateCardHighlighting()
             recyclerChoice.adapter!!.notifyDataSetChanged()
-        })
+        }
 
         // Called each time a card in the choice draw has been selected
         vm.playerCardSelection.observe(viewLifecycleOwner, Observer {
@@ -136,6 +141,27 @@ class GameFragment : Fragment() {
             val viewHolder = recyclerMaps.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
             mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder)
         })
+
+        vm.deckSize.observe(viewLifecycleOwner) {
+            if(it == 0) {
+                val players : Array<String> = vm.playerOrder.keys.stream()
+                    .sorted { p1, p2 -> p2.score - p1.score }
+                    .map { player -> "Player ${player.name} : ${player.score}" }
+                    .collect(toList()).toTypedArray()
+                MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+                    .setTitle("Final Results")
+                    .setItems(players) { _, _ -> }
+                    .setNegativeButton("Dismiss") { dialog, which ->
+                        dialog.dismiss()
+                        // Respond to negative button press
+                    }
+                    .setPositiveButton("New Game") { dialog, which ->
+                        Timber.i("Starting a new game")
+                        Toast.makeText(requireContext(), "Starting a new game", Toast.LENGTH_SHORT).show()
+                    }
+                    .show()
+            }
+        }
     }
 
     /**

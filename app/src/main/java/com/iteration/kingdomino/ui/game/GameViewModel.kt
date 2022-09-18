@@ -16,6 +16,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
      * Deck containing all the cards; cards are drawn from the deck to form the choice deck
      */
     lateinit var deck : Stack<Card>
+    lateinit var deckSize : MutableLiveData<Int>
 
     /**
      * Map of drawn cards to play, which the players choose cards from.
@@ -74,6 +75,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
         Timber.d("Players=${playerOrder}")
 
         setDeck()       // Draw and shuffle the 48 cards deck
+        deckSize = MutableLiveData<Int>().apply { value = deck.size }
         Timber.d("Deck=$deck")
 
         drawCards()     // Draw 4 cards from the deck to form the choice deck
@@ -93,9 +95,11 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
      */
     fun drawCards() {
         if(deck.size < 4) {
+            deckSize.postValue(0)
+            return
             // FIXME: show game ending results
-            Timber.e("End results: ${playerOrder.keys}")
-            throw DeckSizeException("Invalid deck size: current size is ${deck.size}, but it should be greater than 4 to draw cards.")
+//            Timber.e("End results: ${playerOrder.keys}")
+//            throw DeckSizeException("Invalid deck size: current size is ${deck.size}, but it should be greater than 4 to draw cards.")
         }
 
         Timber.v("Before: deck size: ${deck.size}\nchoice = ${choice.value}")
