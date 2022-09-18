@@ -1,16 +1,25 @@
 package com.iteration.kingdomino.components
 
 import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.ViewGroup
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.marginTop
+import androidx.core.view.setPadding
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Player
 import timber.log.Timber
+
 
 class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)
     : LinearLayout(ctx, attrs, defStyleAttr) {
@@ -55,15 +64,16 @@ class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeS
         for(i in players.indices)
         {
             val linearLayout = LinearLayout(ctx)
+            linearLayout.setPadding(5)
+
+            if(currentPlayer == players[i]) {
+                linearLayout.background = ResourcesCompat.getDrawable(resources, R.drawable.golden_glow, null)
+            }
             val tvPlayerName = TextView(ctx)
             val tvPlayerScore = TextView(ctx)
 
             linearLayout.addView(tvPlayerName)
             linearLayout.addView(tvPlayerScore)
-            if(currentPlayer == players[i]) {
-                Timber.e("Current Player !!!")
-                linearLayout.background = ResourcesCompat.getDrawable(linearLayout.resources, R.drawable.golden_glow, null) // FIXME Test for highlighting current player
-            }
 
             linearLayout.orientation = VERTICAL
             linearLayout.gravity = Gravity.CENTER
