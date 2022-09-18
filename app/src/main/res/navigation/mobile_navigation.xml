@@ -22,6 +22,12 @@
         tools:layout="@layout/fragment_game" />
 
     <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.iteration.kingdomino.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
         android:id="@+id/nav_appendix"
         android:name="com.iteration.kingdomino.ui.appendix.AppendixFragment"
         android:label="@string/menu_appendix"

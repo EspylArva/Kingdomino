@@ -56,11 +56,7 @@ class GameFragment : Fragment() {
      */
     private lateinit var buttonConfirm : Button
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vm = ViewModelProvider(this).get(GameViewModel::class.java)
         val root = initViews(inflater, container)
         // Click listener
