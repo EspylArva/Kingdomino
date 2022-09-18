@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="vmStatic" type="com.iteration.kingdomino.ui.settings.SettingsFragment.Companion" />
+    </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.settings.SettingsFragment">
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_confirm_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOn="TestOn"
-        android:textOff="TestOff"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dis">
 
-</FrameLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_confirm_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_confirm_on_play"
+            android:checked="@={vmStatic.confirmOnPlay}"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>
