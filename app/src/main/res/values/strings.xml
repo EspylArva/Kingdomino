@@ -27,6 +27,10 @@
     <string name="error_wrong_field">Cannot play on another player\'s field. Please play on your own field.</string>
     <string name="confirmPlayCard">Are you sure you want to play card %1$d at the displayed location?</string>
     <string name="error_select_card">Card %1$d has already been used this turn. Cannot re-use a card. Select another one.</string>
-
-
+    <string name="score_domain_size">Domain size: %1$d</string>
+    <string name="score_castle_centered">Castle centered: %1$s</string>
+    <string name="score_value">Score: %1$s</string>
+    <string name="score_title">%1$s - Modifier(s): %2$s</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
