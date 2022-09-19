@@ -19,11 +19,12 @@ import java.time.format.DateTimeFormatter
 
 class ScoreFragment(private val date: LocalDateTime, private val gameMode: List<String>, private val players: List<Pair<Player, Int>>) : DialogFragment() {
 
-    private lateinit var recyclerPlayers: RecyclerView
     private var _binding: FragmentScoreBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        // FIXME: maybe we could just use a RecyclerView and remove fragment_score.xml ?
+        // FIXME: Warning: RecyclerView.setMargin(@Px margin) <=== Not dp!
         return AlertDialog.Builder(requireContext())
             .setTitle(getTitle(date, gameMode))
             .setView(initViews(layoutInflater, null))
@@ -34,12 +35,11 @@ class ScoreFragment(private val date: LocalDateTime, private val gameMode: List<
         return initViews(inflater, container)
     }
 
+    // FIXME: Currently required
     private fun initViews(inflater: LayoutInflater, container: ViewGroup?): View? {
-        val root = inflater.inflate(R.layout.fragment_score, container, false)
-        recyclerPlayers = root.findViewById(R.id.recycler_score_players)
-
+        _binding = FragmentScoreBinding.inflate(inflater)
         setAdapter(players)
-        return root
+        return binding.root
     }
 
     private fun getTitle(date: LocalDateTime, gameMode: List<String>) : String {
@@ -49,10 +49,15 @@ class ScoreFragment(private val date: LocalDateTime, private val gameMode: List<
     }
 
     private fun setAdapter(players: List<Pair<Player, Int>>) {
-        recyclerPlayers.setHasFixedSize(true)
-        recyclerPlayers.adapter = ScoreAdapter(players)
-        recyclerPlayers.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        recyclerPlayers.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
+        binding.playerScoreInformationRecycler.setHasFixedSize(true)
+        binding.playerScoreInformationRecycler.adapter = ScoreAdapter(players)
+        binding.playerScoreInformationRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.playerScoreInformationRecycler.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {

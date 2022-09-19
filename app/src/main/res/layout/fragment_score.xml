@@ -6,7 +6,7 @@
     tools:context=".ui.game.ScoreFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_score_players"
+        android:id="@+id/playerScoreInformationRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/dis"/>
