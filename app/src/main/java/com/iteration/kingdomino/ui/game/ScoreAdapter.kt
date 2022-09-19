@@ -33,6 +33,7 @@ class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<
         private val imgScoreCastle : ImageView = itemView.findViewById(R.id.img_score_player_crown)
         private val lblPlayer : TextView = itemView.findViewById(R.id.lbl_score_player_name)
         private val lblCastleCentered : TextView = itemView.findViewById(R.id.lbl_score_centered_castle)
+        private val lblCrownCount : TextView = itemView.findViewById(R.id.lbl_score_crown_count)
         private val lblDomainSize : TextView = itemView.findViewById(R.id.lbl_score_domain_size)
         private val lblScore : TextView = itemView.findViewById(R.id.lbl_score_value)
 
@@ -52,6 +53,7 @@ class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<
             lblPlayer.text = player.name
             lblCastleCentered.text = res.getString(R.string.score_castle_centered, castleCentered)
             lblDomainSize.text = res.getString(R.string.score_domain_size, player.map.domainSize)
+            lblCrownCount.text = res.getString(R.string.score_crown_count, player.map.crownCount)
             lblScore.text = res.getString(R.string.score_value, player.score.toString())
         }
 

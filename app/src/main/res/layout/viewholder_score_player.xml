@@ -24,22 +24,21 @@
         app:layout_constraintTop_toTopOf="@id/img_score_player_crown"
         app:layout_constraintStart_toEndOf="@id/img_score_player_crown"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"/>
 
     <TextView
         android:id="@+id/lbl_score_domain_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Domain size: 25"
+        android:text="@string/score_domain_size"
         app:layout_constraintTop_toBottomOf="@id/lbl_score_player_name"
-        app:layout_constraintStart_toEndOf="@id/img_score_player_crown"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintStart_toEndOf="@id/img_score_player_crown"/>
 
     <TextView
         android:id="@+id/lbl_score_centered_castle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Castle centered: Yes"
+        android:text="@string/score_castle_centered"
         app:layout_constraintStart_toEndOf="@id/img_score_player_crown"
         app:layout_constraintTop_toBottomOf="@id/lbl_score_crown_count"
         tools:ignore="HardcodedText" />
@@ -48,21 +47,19 @@
         android:id="@+id/lbl_score_crown_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of crowns: 14"
+        android:text="@string/score_crown_count"
         app:layout_constraintStart_toEndOf="@id/img_score_player_crown"
-        app:layout_constraintTop_toBottomOf="@id/lbl_score_domain_size"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@id/lbl_score_domain_size"/>
 
     <TextView
         android:id="@+id/lbl_score_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Score: 0"
+        android:text="@string/score_value"
         android:textSize="24sp"
         android:padding="@dimen/dis"
         app:layout_constraintTop_toBottomOf="@id/lbl_score_player_name"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

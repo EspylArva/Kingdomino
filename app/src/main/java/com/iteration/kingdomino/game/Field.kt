@@ -27,10 +27,12 @@ class Field {
      */
     private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
 
-    val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.collect(toList()).size
+    val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.collect(toList()).size
+    val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.map { it.crown.value }.reduce(0, Integer::sum)
+
     val castleCentered: Boolean get() {
-        val domainSize = trimmedField.field.size
-        return trimmedField.field[domainSize/2][domainSize/2].type == Tile.Terrain.CASTLE
+        val middle = trimmedField.field.size.floorDiv(2)
+        return trimmedField.field[middle][middle].type == Tile.Terrain.CASTLE
     }
 
     init {
