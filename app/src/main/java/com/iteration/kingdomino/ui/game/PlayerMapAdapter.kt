@@ -2,13 +2,12 @@ package com.iteration.kingdomino.ui.game
 
 import android.annotation.SuppressLint
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +21,11 @@ import timber.log.Timber
 
 class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<PlayerMapAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.viewholder_player_map, parent, false))
+        return ViewHolder(GridLayout(parent.context))
     }
 
     override fun getItemCount() = vm.playerOrder.size
 
-    @SuppressLint("ShowToast")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Timber.v("onBindViewHolder of PlayerMapAdapter. position=$position")
         val field = vm.playerOrder.keys.toList()[position].map.field
@@ -37,11 +34,11 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
     }
 
     private fun displayPlayerMap(field: MutableList<MutableList<Tile>>, position: Int, holder: ViewHolder) {
-        holder.playerMap.removeAllViews()
+        holder.clear()
         val rows = field.size
         val columns = field[0].size
-        holder.playerMap.rowCount = rows
-        holder.playerMap.columnCount = columns
+        holder.rowCount = rows
+        holder.colCount = columns
 
         for(row in 0 until field.size)
         {
@@ -102,16 +99,16 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
      * @param alpha transparency level. Should be between 0 and 1. Default value is 1.
      * @param holder the ViewHolder containing the cell to change.
      */
-    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, alpha: Float = 1f, holder: ViewHolder) {
+    private fun setNewDrawable(tile: Tile, position: Pair<Int, Int>, @FloatRange(from=0.0, to=1.0) alpha: Float = 1f, holder: ViewHolder) {
         val index = position.first*9 + position.second
         Timber.v("Trying to display ghost @$position. Shooting for index=$index")
-        val clTile = holder.playerMap[index] as ConstraintLayout
+        val clTile = holder.getCellAt(index)
 
         clTile.removeAllViews()
 
         val ivCrown = ImageView(clTile.context)
         ivCrown.setImageResource(tile.crown.drawableId)
-        ivCrown.alpha = 1f.coerceAtMost(alpha * 1.5f)
+        ivCrown.alpha = 1f.coerceAtMost(alpha * 1.75f)
         val ivType = ImageView(clTile.context)
         ivType.setImageResource(tile.type.drawableId)
         ivType.alpha = alpha
@@ -179,9 +176,15 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         return clTile
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(private val playerMap: GridLayout) : RecyclerView.ViewHolder(playerMap)
     {
-        val playerMap : GridLayout = itemView.findViewById(R.id.player_map)
+        var rowCount: Int
+            get() = playerMap.rowCount
+            set(value) {playerMap.rowCount = value}
+
+        var colCount: Int
+            get() = playerMap.columnCount
+            set(value) {playerMap.columnCount = value}
 
         fun add(clTile: ConstraintLayout, row: Int, col: Int) {
             val metrics = DisplayMetrics()
@@ -196,6 +199,13 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
 
             playerMap.addView(clTile, gridParam)
         }
+
+        fun getCellAt(index: Int): ConstraintLayout {
+            return playerMap[index] as ConstraintLayout
+        }
+
+        fun clear() = playerMap.removeAllViews()
+
     }
 
 }
