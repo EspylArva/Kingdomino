@@ -7,7 +7,7 @@
     tools:context=".ui.game.GameFragment">
 
     <com.iteration.kingdomino.components.GameHeader
-        android:id="@+id/cl_player_info"
+        android:id="@+id/playerInfoHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dis"
@@ -16,33 +16,33 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_player_field"
+        android:id="@+id/playerFieldRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/dis"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_player_info"
-        app:layout_constraintBottom_toTopOf="@id/layout_action_buttons" />
+        app:layout_constraintTop_toBottomOf="@id/playerInfoHeader"
+        app:layout_constraintBottom_toTopOf="@id/actionButtonsContainer" />
 
     <LinearLayout
-        android:id="@+id/layout_action_buttons"
+        android:id="@+id/actionButtonsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/recycler_card_choice"
+        app:layout_constraintBottom_toTopOf="@+id/cardChoiceRecycler"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_player_field">
+        app:layout_constraintTop_toBottomOf="@+id/playerFieldRecycler">
         <Button
-            android:id="@+id/button_cancel"
+            android:id="@+id/cancelChoiceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dis"
             android:text="@string/cancel"/>
 
         <Button
-            android:id="@+id/button_confirm"
+            android:id="@+id/confirmChoiceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dis"
@@ -50,7 +50,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_card_choice"
+        android:id="@+id/cardChoiceRecycler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dis"

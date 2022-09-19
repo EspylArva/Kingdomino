@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.*
+import com.iteration.kingdomino.databinding.FragmentGameBinding
 import com.iteration.kingdomino.ui.settings.SettingsFragment
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -23,64 +24,42 @@ import java.util.stream.Collectors.toList
 class GameFragment : Fragment() {
 
     private lateinit var vm: GameViewModel
-
-    /**
-     * Drawn cards RecyclerView.
-     * Should always contain four cards, and display both the card tiles and the card index.
-     */
-    private lateinit var recyclerChoice : RecyclerView
-
-    /**
-     * Player field RecyclerView.
-     * Should contain as many panels as there are players.
-     */
-    private lateinit var recyclerMaps : RecyclerView
-
-    /**
-     * Header where player information is displayed.
-     * Should display players in order, as well as their points.
-     * When a card is placed but not played, the point differential should be displayed.
-     */
-    private lateinit var clHeader : GameHeader
-
-    /**
-     * Button to reset card pick and position selection.
-     * Clicking the cancel button should display the current player's field.
-     */
-    private lateinit var buttonCancel : Button
-
-    /**
-     * Button to confirm playing the card.
-     * Any card placed but not confirmed will not be played: it will be displayed as "ghost" tiles, and additional points will be hinted.
-     */
-    private lateinit var buttonConfirm : Button
+    private lateinit var binding: FragmentGameBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vm = ViewModelProvider(this).get(GameViewModel::class.java)
-        val root = initViews(inflater, container)
+        binding = FragmentGameBinding.inflate(inflater)
+
+        buildCardChoiceRecycler()
+        buildPlayerFieldRecycler()
+
+        // Update player information and order in the [clHeader]
+        binding.playerInfoHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
+
         // Click listener
         setListeners()
         // Game state observers
         setObservers()
-        return root
+
+        return binding.root
     }
 
     /**
      * Setting GUI components listeners.
      */
     private fun setListeners() {
-        clHeader.setOnClickListener {
+        binding.playerInfoHeader.setOnClickListener {
             vm.deckSize.postValue(0) // FIXME: debugging purposes. Displays to end result.
         }
 
-        buttonCancel.setOnClickListener {
+        binding.cancelChoiceButton.setOnClickListener {
             vm.playerCardSelection.value = null
             vm.playerPickedPositions.value!!.clear()
-            recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
-            recyclerMaps.adapter!!.notifyDataSetChanged()
+            binding.playerFieldRecycler.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
+            binding.playerFieldRecycler.adapter!!.notifyDataSetChanged()
         }
 
-        buttonConfirm.setOnClickListener {
+        binding.confirmChoiceButton.setOnClickListener {
             Timber.d("Current settings: ${SettingsFragment.settingsList}")
             if(SettingsFragment.confirmOnPlay){
                 val builder = AlertDialog.Builder(context)
@@ -105,23 +84,23 @@ class GameFragment : Fragment() {
             player.observe(viewLifecycleOwner) {
                 val playerIndex = vm.playerOrder.keys.toList().indexOf(player)
                 Timber.d("Obs: $it updated. Refreshing UI (field #$playerIndex).")
-                recyclerMaps.adapter!!.notifyDataSetChanged()
+                binding.playerFieldRecycler.adapter!!.notifyDataSetChanged()
             }
         }
 
         // Player finished his turn (players.cycle() finished)
         vm.players.observe(viewLifecycleOwner) {
             Timber.d("Obs: Player changed. ${vm.players.value!![0]}'s turn begins")
-            clHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
+            binding.playerInfoHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
             // Show current player map
-            recyclerMaps.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
+            binding.playerFieldRecycler.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
         }
 
         // Called each time the choice deck has been refreshed
         vm.choice.observe(viewLifecycleOwner) {
             Timber.d("Obs: New choice drawn: choice=${vm.choice.value!!}")
             updateCardHighlighting()
-            recyclerChoice.adapter!!.notifyDataSetChanged()
+            binding.cardChoiceRecycler.adapter!!.notifyDataSetChanged()
         }
 
         // Called each time a card in the choice draw has been selected
@@ -134,8 +113,8 @@ class GameFragment : Fragment() {
         vm.playerPickedPositions.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New position picked. pick=${vm.playerPickedPositions.value}")
             // Display ghost
-            val mapAdapter = recyclerMaps.adapter!! as PlayerMapAdapter
-            val viewHolder = recyclerMaps.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
+            val mapAdapter = binding.playerFieldRecycler.adapter!! as PlayerMapAdapter
+            val viewHolder = binding.playerFieldRecycler.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
             mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder)
         })
 
@@ -184,7 +163,7 @@ class GameFragment : Fragment() {
      * @param i card index in the card choice list. This parameter should always be between 0 and 3.
      */
     private fun highlightViewHolderAt(i: Int) {
-        val holder = (recyclerChoice.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
+        val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
         ((holder.itemView.parent as RecyclerView)
                 .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
                 .imgOverlay.background = null
@@ -197,7 +176,7 @@ class GameFragment : Fragment() {
      * @param i card index in the card choice list. This parameter should always be between 0 and 3.
      */
     private fun darkenViewHolderAt(i: Int) {
-        val holder = (recyclerChoice.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
+        val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
         ((holder.itemView.parent as RecyclerView)
                 .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
                 .imgOverlay.setBackgroundColor(
@@ -212,36 +191,35 @@ class GameFragment : Fragment() {
 
 
     /**
-     * Initialises Views, attaching Adapters to RecyclerViews
+     * Sets up the card choice recycler parameters.
      *
-     * @param inflater the LayoutInflater
-     * @param container the ViewGroup
-     * @return the root view
+     * - hasFixedSize: whether or not size changes depending on the amount of items
+     * - adapter: the content
+     * - layoutManager: the orientation
+     * - params: [RecyclerViewMargin]: space between each item
      */
-    private fun initViews(inflater: LayoutInflater, container: ViewGroup?): View? {
-        val root = inflater.inflate(R.layout.fragment_game, container, false)
-        recyclerChoice = root.findViewById(R.id.recycler_card_choice)
-        recyclerMaps = root.findViewById(R.id.recycler_player_field)
-        clHeader = root.findViewById(R.id.cl_player_info)
-        buttonConfirm = root.findViewById(R.id.button_confirm)
-        buttonCancel = root.findViewById(R.id.button_cancel)
+    private fun buildCardChoiceRecycler() {
+        binding.cardChoiceRecycler.setHasFixedSize(true)
+        binding.cardChoiceRecycler.adapter = CardChoiceAdapter(vm)
+        binding.cardChoiceRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.cardChoiceRecycler.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()), 4))
+    }
 
-        // Sets up [recyclerChoice] parameters
-        recyclerChoice.setHasFixedSize(true)
-        recyclerChoice.adapter = CardChoiceAdapter(vm)
-        recyclerChoice.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recyclerChoice.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()),4))
-
-        // Sets up [recyclerMaps] parameters
-        recyclerMaps.setHasFixedSize(true)
-        recyclerMaps.adapter = PlayerMapAdapter(vm)
-        recyclerMaps.layoutManager = AdjustableScrollSpeedLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 125f)
-        PagerSnapHelper().attachToRecyclerView(recyclerMaps)
-        recyclerMaps.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
-
-        // Update player information and order in the [clHeader]
-        clHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
-
-        return root
+    /**
+     * Sets up the player field recycler parameters.
+     *
+     * - hasFixedSize: whether or not size changes depending on the amount of items
+     * - adapter: the content
+     * - layoutManager: the orientation. This manager allows for a quicker programmatic scrolling
+     * - params:
+     *     - [RecyclerDotIndicator]: amount of [RecyclerView.ViewHolder] and position of the currently shown one
+     *     - [PagerSnapHelper]: Scrolling incompletely will snap back to the closest [RecyclerView.ViewHolder]
+     */
+    private fun buildPlayerFieldRecycler() {
+        binding.playerFieldRecycler.setHasFixedSize(true)
+        binding.playerFieldRecycler.adapter = PlayerMapAdapter(vm)
+        binding.playerFieldRecycler.layoutManager = AdjustableScrollSpeedLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 125f)
+        PagerSnapHelper().attachToRecyclerView(binding.playerFieldRecycler)
+        binding.playerFieldRecycler.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
     }
 }

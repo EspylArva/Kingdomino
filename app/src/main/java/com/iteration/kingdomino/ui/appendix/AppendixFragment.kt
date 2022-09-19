@@ -53,7 +53,7 @@ class AppendixFragment : Fragment() {
             val html = HtmlGenerator(text, parsedTree, flavour).generateHtml()
 
             Timber.d("HTML: $html")
-            binding.webViewAppendix.loadDataWithBaseURL("file:///android_res/drawable/", html, "text/html", "UTF-8", null)
+            binding.appendixWebView.loadDataWithBaseURL("file:///android_res/drawable/", html, "text/html", "UTF-8", null)
         }
     }
 }
