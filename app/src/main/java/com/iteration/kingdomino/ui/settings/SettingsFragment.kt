@@ -11,13 +11,9 @@ import com.iteration.kingdomino.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return initView(inflater, container)
-    }
-
-    private fun initView(inflater: LayoutInflater, container: ViewGroup?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentSettingsBinding>(inflater, R.layout.fragment_settings, container, false)
-        binding.vmStatic = SettingsFragment.Companion
+        binding.vmStatic = Companion
         return binding.root
     }
 

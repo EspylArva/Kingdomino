@@ -17,7 +17,6 @@
             android:padding="@dimen/dis">
 
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_confirm_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings_confirm_on_play"
