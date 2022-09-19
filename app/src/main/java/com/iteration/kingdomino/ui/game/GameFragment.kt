@@ -166,7 +166,7 @@ class GameFragment : Fragment() {
         val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
         ((holder.itemView.parent as RecyclerView)
                 .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
-                .imgOverlay.background = null
+                .binding.shadowOverlayImageView.background = null
         Timber.v("Success highlighting ViewHolder #$i")
     }
 
@@ -179,7 +179,7 @@ class GameFragment : Fragment() {
         val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
         ((holder.itemView.parent as RecyclerView)
                 .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
-                .imgOverlay.setBackgroundColor(
+                .binding.shadowOverlayImageView.setBackgroundColor(
                         ResourcesCompat.getColor(
                                 holder.itemView.resources,
                                 R.color.unselected,

@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
+import com.iteration.kingdomino.databinding.ViewholderCardChoiceBinding
 import com.iteration.kingdomino.game.Card
 import com.iteration.kingdomino.game.Tile
 import timber.log.Timber
@@ -18,7 +19,8 @@ import timber.log.Timber
 class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.viewholder_card_choice, parent, false))
+        val binding = ViewholderCardChoiceBinding.inflate(inflater)
+        return ViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -29,7 +31,7 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
         Timber.v("onBindViewHolder of CardChoiceAdapter")
         val card = vm.choice.value!!.entries.toList()[position].key
 
-        holder.lblId.text = card.id.toString()
+        holder.binding.cardIdLabel.text = card.id.toString()
         holder.setDrawables(card)
         holder.setSize()
 
@@ -59,20 +61,7 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
 
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-    {
-        val lblId : TextView = itemView.findViewById(R.id.lbl_card_id)
-
-        val clFirst : ConstraintLayout = itemView.findViewById(R.id.card_first_tile)
-        val clSecond : ConstraintLayout = itemView.findViewById(R.id.card_second_tile)
-
-        val imgCrowns1 : ImageView = itemView.findViewById(R.id.img_card_crowns_one)
-        val imgCrowns2 : ImageView = itemView.findViewById(R.id.img_card_crowns_two)
-        val imgType1 : ImageView = itemView.findViewById(R.id.img_card_type_one)
-        val imgType2 : ImageView = itemView.findViewById(R.id.img_card_type_two)
-
-        val imgOverlay : ImageView = itemView.findViewById(R.id.img_card_overlay)
-
+    class ViewHolder(val binding: ViewholderCardChoiceBinding) : RecyclerView.ViewHolder(binding.root) {
         /**
          * Sets the [ViewHolder] drawables according to the given card.
          * A [ViewHolder] contains two sets of two [ImageView].
@@ -81,10 +70,10 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
          * @param card the [Card] whose [Tile.Terrain] and [Tile.Crown] will be displayed.
          */
         fun setDrawables(card: Card) {
-            imgCrowns1.setBackground(card.tile1.crown.drawableId)
-            imgType1.setBackground(card.tile1.type.drawableId)
-            imgCrowns2.setBackground(card.tile2.crown.drawableId)
-            imgType2.setBackground(card.tile2.type.drawableId)
+            binding.tileOneCrownImageView.setBackground(card.tile1.crown.drawableId)
+            binding.tileOneTerrainImageView.setBackground(card.tile1.type.drawableId)
+            binding.tileTwoCrownImageView.setBackground(card.tile2.crown.drawableId)
+            binding.tileTwoTerrainImageView.setBackground(card.tile2.type.drawableId)
         }
 
         /**
@@ -93,11 +82,10 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
         fun setSize() {
             val metrics = DisplayMetrics()
             itemView.context.display?.getRealMetrics(metrics)
-//            WindowManager.getCurrentWindowMetrics()
             val size = (metrics.widthPixels * 0.2).toInt()
-            clFirst.layoutParams.width  = size; clFirst.layoutParams.height  = size
-            clSecond.layoutParams.width = size; clSecond.layoutParams.height = size
-            clSecond.requestLayout()
+            binding.tileOneContainer.layoutParams.width  = size; binding.tileOneContainer.layoutParams.height  = size
+            binding.tileTwoContainer.layoutParams.width = size; binding.tileTwoContainer.layoutParams.height = size
+            binding.tileTwoContainer.requestLayout()
         }
 
         /**

@@ -2,80 +2,73 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/ic_card_border"
     android:padding="1dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/card_id"
+    <TextView
+        android:id="@+id/cardIdLabel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/lbl_card_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_card">
+        android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/card_first_tile"
+            android:id="@+id/tileOneContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/card_second_tile">
+            app:layout_constraintBottom_toTopOf="@id/tileTwoContainer">
             <ImageView
+                android:id="@+id/tileOneTerrainImageView"
                 android:background="@drawable/ic_terrain_mine"
-                android:id="@+id/img_card_type_one"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
             <ImageView
-                android:id="@+id/img_card_crowns_one"
+                android:id="@+id/tileOneCrownImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/card_second_tile"
+            android:id="@+id/tileTwoContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:background="@color/unselected"
-            app:layout_constraintStart_toStartOf="@id/card_first_tile"
-            app:layout_constraintEnd_toEndOf="@id/card_first_tile"
-            app:layout_constraintTop_toBottomOf="@id/card_first_tile">
+            app:layout_constraintTop_toBottomOf="@id/tileOneContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
             <ImageView
                 android:background="@drawable/ic_terrain_plain"
-                android:id="@+id/img_card_type_two"
+                android:id="@+id/tileTwoTerrainImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
             <ImageView
-                android:id="@+id/img_card_crowns_two"
+                android:id="@+id/tileTwoCrownImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
-            android:id="@+id/img_card_overlay"
+            android:id="@+id/shadowOverlayImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

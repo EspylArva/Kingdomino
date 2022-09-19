@@ -23,11 +23,7 @@ class AppendixFragment : Fragment() {
 
     private lateinit var binding: FragmentAppendixBinding
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentAppendixBinding.inflate(inflater)
 
         val args: AppendixFragmentArgs by navArgs()
