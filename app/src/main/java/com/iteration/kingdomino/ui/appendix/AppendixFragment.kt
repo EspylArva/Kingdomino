@@ -21,10 +21,11 @@ import java.util.stream.Collectors.toList
 
 class AppendixFragment : Fragment() {
 
-    private lateinit var binding: FragmentAppendixBinding
+    private val binding get() = _binding!!
+    private var _binding: FragmentAppendixBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentAppendixBinding.inflate(inflater)
+        _binding = FragmentAppendixBinding.inflate(inflater)
 
         val args: AppendixFragmentArgs by navArgs()
         setAppendix(args.pageContent)
@@ -45,5 +46,10 @@ class AppendixFragment : Fragment() {
             Timber.d("HTML: $html")
             binding.appendixWebView.loadDataWithBaseURL("file:///android_res/drawable/", html, "text/html", "UTF-8", null)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

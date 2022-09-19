@@ -24,11 +24,12 @@ import java.util.stream.Collectors.toList
 class GameFragment : Fragment() {
 
     private lateinit var vm: GameViewModel
-    private lateinit var binding: FragmentGameBinding
+    private var _binding: FragmentGameBinding? = null
+    private val binding = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vm = ViewModelProvider(this).get(GameViewModel::class.java)
-        binding = FragmentGameBinding.inflate(inflater)
+        _binding = FragmentGameBinding.inflate(inflater)
 
         buildCardChoiceRecycler()
         buildPlayerFieldRecycler()
@@ -221,5 +222,10 @@ class GameFragment : Fragment() {
         binding.playerFieldRecycler.layoutManager = AdjustableScrollSpeedLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 125f)
         PagerSnapHelper().attachToRecyclerView(binding.playerFieldRecycler)
         binding.playerFieldRecycler.addItemDecoration(RecyclerDotIndicator(0xFFFFFFFFFF.toInt(), 0x66FFFFFF))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
+import com.iteration.kingdomino.databinding.FragmentScoreBinding
 import com.iteration.kingdomino.game.Player
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -19,6 +20,8 @@ import java.time.format.DateTimeFormatter
 class ScoreFragment(private val date: LocalDateTime, private val gameMode: List<String>, private val players: List<Pair<Player, Int>>) : DialogFragment() {
 
     private lateinit var recyclerPlayers: RecyclerView
+    private var _binding: FragmentScoreBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
