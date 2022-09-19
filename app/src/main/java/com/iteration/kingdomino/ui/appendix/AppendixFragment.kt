@@ -21,15 +21,13 @@ import java.util.stream.Collectors.toList
 
 class AppendixFragment : Fragment() {
 
-    private lateinit var appendixViewModel: AppendixViewModel
     private lateinit var binding: FragmentAppendixBinding
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
-        appendixViewModel = ViewModelProvider(this).get(AppendixViewModel::class.java)
+    ): View {
         binding = FragmentAppendixBinding.inflate(inflater)
 
         val args: AppendixFragmentArgs by navArgs()
@@ -37,10 +35,6 @@ class AppendixFragment : Fragment() {
 
         return binding.root
     }
-
-    private fun initListeners() { }
-
-    private fun initObservers() {}
 
     private fun setAppendix(@RawRes resourceId: Int) {
         val resourceName = resources.getResourceName(resourceId)
