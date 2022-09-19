@@ -12,10 +12,11 @@ import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.FragmentMenuBinding
 
 class MainMenuFragment : Fragment() {
-    private lateinit var binding: FragmentMenuBinding
+    private var _binding: FragmentMenuBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMenuBinding.inflate(inflater)
+        _binding = FragmentMenuBinding.inflate(inflater)
         initListeners()
         return binding.root
     }
@@ -43,5 +44,10 @@ class MainMenuFragment : Fragment() {
             action.pageContent = R.raw.readme
             findNavController().navigate(action)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
