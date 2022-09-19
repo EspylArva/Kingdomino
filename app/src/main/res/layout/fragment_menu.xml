@@ -7,7 +7,6 @@
     tools:context=".ui.menu.MainMenuFragment">
 
     <ImageView
-        android:id="@+id/img_background"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:src="@drawable/ic_background"
@@ -25,11 +24,10 @@
         android:src="@drawable/ic_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ll_buttons"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/ll_buttons"
+        android:id="@+id/buttonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -40,31 +38,32 @@
         app:layout_constraintTop_toBottomOf="@id/img_logo">
 
         <Button
-            android:id="@+id/btn_new_game"
+            android:id="@+id/createNewGameButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_new_game" />
 
         <Button
-            android:id="@+id/btn_continue_game"
+            android:id="@+id/continueCurrentGameButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/large_dis"
             android:text="@string/btn_continue_game" />
 
         <Button
-            android:id="@+id/btn_settings"
+            android:id="@+id/settingsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_settings" />
 
         <Button
-            android:id="@+id/btn_rules"
+            android:id="@+id/rulesButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_rules" />
 
         <Button
-            android:id="@+id/btn_credits"
+            android:id="@+id/creditsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_credits" />
