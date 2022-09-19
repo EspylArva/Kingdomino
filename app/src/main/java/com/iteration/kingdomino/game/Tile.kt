@@ -11,6 +11,7 @@ data class Tile(val type : Terrain, val crown : Crown) {
          * List of [Terrain.CASTLE] drawables. There are four different colors of [Terrain.CASTLE], thus, four different drawables.
          */
         val CASTLES = listOf(R.drawable.ic_castle_red, R.drawable.ic_castle_blue, R.drawable.ic_castle_orange, R.drawable.ic_castle_green)
+        fun nullTile() : Tile = Tile(Terrain.NULL, Crown.ZERO)
     }
 
     override fun toString() = "[$type (${crown.value})]"
@@ -34,4 +35,3 @@ data class Tile(val type : Terrain, val crown : Crown) {
     }
 }
 
-fun nullTile() : Tile = Tile(Tile.Terrain.NULL, Tile.Crown.ZERO)

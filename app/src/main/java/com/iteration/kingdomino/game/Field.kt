@@ -12,7 +12,7 @@ class Field {
         field.addAll(argField)
     }
 
-    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { nullTile() } }
+    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile.nullTile() } }
     private val trimmedField
         get() = field.trimmed()
 
@@ -28,7 +28,7 @@ class Field {
     private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
 
     val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.collect(toList()).size
-    val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.map { it.crown.value }.reduce(0, Integer::sum)
+    val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.mapToInt() { it.crown.value }.sum()
 
     val castleCentered: Boolean get() {
         val middle = trimmedField.field.size.floorDiv(2)
@@ -238,27 +238,27 @@ class Field {
             get() = playerFieldExceptionPrefix + super.message
     }
 
-}
-
-private fun MutableList<MutableList<Tile>>.addAt(x: Int, y: Int, tile: Tile) : MutableList<MutableList<Tile>> {
-    this[x][y] = tile
-    return this
-}
-
-private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile>> {
-    return this.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
-}
-
-private fun MutableList<MutableList<Tile>>.trimmed(): Field {
-    val trimmedField = this.clone()// fieldClone() // clone the field
-    for(i in 8 downTo 0) {
-        if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
-            trimmedField.removeAt(i)
-        }
-        if(this.all { row -> row[i].type == Tile.Terrain.NULL }) {
-            trimmedField.forEach { row -> row.removeAt(i) }
-        }
+    private fun MutableList<MutableList<Tile>>.addAt(x: Int, y: Int, tile: Tile) : MutableList<MutableList<Tile>> {
+        this[x][y] = tile
+        return this
     }
-    return Field(trimmedField)
+
+    private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile>> {
+        return this.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
+    }
+
+    private fun MutableList<MutableList<Tile>>.trimmed(): Field {
+        val trimmedField = this.clone()// fieldClone() // clone the field
+        for(i in 8 downTo 0) {
+            if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
+                trimmedField.removeAt(i)
+            }
+            if(this.all { row -> row[i].type == Tile.Terrain.NULL }) {
+                trimmedField.forEach { row -> row.removeAt(i) }
+            }
+        }
+        return Field(trimmedField)
+    }
 }
+
 

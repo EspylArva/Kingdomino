@@ -24,6 +24,9 @@ class LoopingList<T> internal constructor(private var array: Array<Any?>) : Muta
     override fun toString(): String {
         return this.value.toString()
     }
+
+    companion object {
+        fun <T> loopingListOf(vararg elements : T) : LoopingList<T> = if (elements.isEmpty()) LoopingList(emptyArray()) else LoopingList(elements.asList())
+    }
 }
 
-fun <T> loopingListOf(vararg elements : T) : LoopingList<T> = if (elements.isEmpty()) LoopingList<T>(emptyArray()) else LoopingList<T>(elements.asList())
