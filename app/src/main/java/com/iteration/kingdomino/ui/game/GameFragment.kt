@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.IntRange
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,7 +26,7 @@ class GameFragment : Fragment() {
 
     private lateinit var vm: GameViewModel
     private var _binding: FragmentGameBinding? = null
-    private val binding = _binding!!
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vm = ViewModelProvider(this).get(GameViewModel::class.java)
@@ -138,57 +139,20 @@ class GameFragment : Fragment() {
         val card = vm.playerCardSelection.value
         Timber.d("Updating highlighting of choice. Current choice state: ${vm.choice.value!!}, selectedCard=$card")
 
+        val selectedCardIndex = vm.choice.value!!.keys.indexOf(card)
         for (i in 0..3) {
-            val highlightCard = if(card == null){
-                // No card selected AND
-                // Card has not been played yet (thus is available)
-                vm.choice.value!!.entries.toList()[i].value
+            val vh = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
+            if(card == null) {
+                val cardAtISelectable = vm.choice.value!!.entries.toList()[i].value
+                vh.setCardUnselectedHighlighting(cardAtISelectable)
             } else {
-                // A card has been selected AND1
-                // Card is currently selected
-                i == vm.choice.value!!.keys.indexOf(card)
+                val cardSelected = i == selectedCardIndex
+                vh.setCardSelectedHighlighting(cardSelected)
             }
-
-            if(highlightCard) {
-                highlightViewHolderAt(i)
-            } else {
-                darkenViewHolderAt(i)
-            }
-
         }
     }
 
-    /**
-     * Highlight [CardChoiceAdapter.ViewHolder] at given index.
-     *
-     * @param i card index in the card choice list. This parameter should always be between 0 and 3.
-     */
-    private fun highlightViewHolderAt(i: Int) {
-        val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
-        ((holder.itemView.parent as RecyclerView)
-                .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
-                .binding.shadowOverlayImageView.background = null
-        Timber.v("Success highlighting ViewHolder #$i")
-    }
 
-    /**
-     * Darkens [CardChoiceAdapter.ViewHolder] at given index.
-     *
-     * @param i card index in the card choice list. This parameter should always be between 0 and 3.
-     */
-    private fun darkenViewHolderAt(i: Int) {
-        val holder = (binding.cardChoiceRecycler.findViewHolderForAdapterPosition(i) ?: return) as CardChoiceAdapter.ViewHolder
-        ((holder.itemView.parent as RecyclerView)
-                .findViewHolderForAdapterPosition(i) as CardChoiceAdapter.ViewHolder)
-                .binding.shadowOverlayImageView.setBackgroundColor(
-                        ResourcesCompat.getColor(
-                                holder.itemView.resources,
-                                R.color.unselected,
-                                null
-                        )
-                )
-        Timber.v("Success darkening ViewHolder #$i")
-    }
 
 
     /**

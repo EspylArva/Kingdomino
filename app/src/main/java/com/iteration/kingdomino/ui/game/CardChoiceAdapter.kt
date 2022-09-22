@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -95,6 +96,43 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
          */
         private fun ImageView.setBackground(drawableId: Int) {
             this.background = if (drawableId != 0) ResourcesCompat.getDrawable(this.resources, drawableId, null) else null
+        }
+
+
+        /**
+         * Updates [CardChoiceAdapter] card highlighting.
+         * When a card is selected: highlights the selection, and darken all other cards.
+         * When no card is selected: highlight available cards, and darken unusable cards.
+         */
+        fun setCardUnselectedHighlighting(cardSelectable: Boolean) {
+            itemView.background = null
+            if (cardSelectable) {
+                binding.shadowOverlayImageView.background = null
+            } else {
+                binding.shadowOverlayImageView.setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        itemView.resources,
+                        R.color.unselected,
+                        null
+                    )
+                )
+            }
+        }
+
+        fun setCardSelectedHighlighting(cardSelected: Boolean) {
+            itemView.background = null
+            if (cardSelected) {
+                binding.shadowOverlayImageView.background = null
+                itemView.background = ResourcesCompat.getDrawable(itemView.resources, R.drawable.golden_glow, null)
+            } else {
+                binding.shadowOverlayImageView.setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        itemView.resources,
+                        R.color.unselected,
+                        null
+                    )
+                )
+            }
         }
     }
 
