@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -38,9 +39,8 @@ class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<
         private val lblScore : TextView = itemView.findViewById(R.id.lbl_score_value)
 
         init {
-            val metrics = DisplayMetrics()
-            itemView.context.display?.getRealMetrics(metrics)
-            val size = (metrics.widthPixels * 0.2).toInt()
+            val metrics = itemView.context.getSystemService(WindowManager::class.java).currentWindowMetrics.bounds
+            val size = (metrics.width() * 0.2).toInt()
             imgScoreCastle.layoutParams.height = size
             imgScoreCastle.layoutParams.width = size
             lblPlayer.textSize = 36f // FIXME relative size ?

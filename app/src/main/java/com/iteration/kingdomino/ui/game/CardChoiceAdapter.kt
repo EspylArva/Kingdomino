@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -81,9 +82,8 @@ class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<C
          * Sets the [ViewHolder] components to a square shape.
          */
         fun setSize() {
-            val metrics = DisplayMetrics()
-            itemView.context.display?.getRealMetrics(metrics)
-            val size = (metrics.widthPixels * 0.2).toInt()
+            val metrics = itemView.context.getSystemService(WindowManager::class.java).currentWindowMetrics.bounds
+            val size = (metrics.width() * 0.2).toInt()
             binding.tileOneContainer.layoutParams.width  = size; binding.tileOneContainer.layoutParams.height  = size
             binding.tileTwoContainer.layoutParams.width = size; binding.tileTwoContainer.layoutParams.height = size
             binding.tileTwoContainer.requestLayout()
