@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.annotation.IntRange
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -96,19 +94,20 @@ class GameFragment : Fragment() {
             binding.playerInfoHeader.updatePlayers(vm.playerOrder.keys.toList(), vm.currentPlayer!!)
             // Show current player map
             binding.playerFieldRecycler.smoothScrollToPosition(vm.playerOrder.keys.toList().indexOf(vm.players.value!![0]))
+            highlightCurrentPlayerField()
         }
 
         // Called each time the choice deck has been refreshed
         vm.choice.observe(viewLifecycleOwner) {
             Timber.d("Obs: New choice drawn: choice=${vm.choice.value!!}")
-            updateCardHighlighting()
+            highlightChoiceCards()
             binding.cardChoiceRecycler.adapter!!.notifyDataSetChanged()
         }
 
         // Called each time a card in the choice draw has been selected
         vm.playerCardSelection.observe(viewLifecycleOwner, Observer {
             Timber.d("Obs: New card picked. pick=${vm.playerCardSelection.value}")
-            updateCardHighlighting()
+            highlightChoiceCards()
         })
 
         // Called each time player registers a position
@@ -135,7 +134,7 @@ class GameFragment : Fragment() {
      * When a card is selected: highlights the selection, and darken all other cards.
      * When no card is selected: highlight available cards, and darken unusable cards.
      */
-    private fun updateCardHighlighting() {
+    private fun highlightChoiceCards() {
         val card = vm.playerCardSelection.value
         Timber.d("Updating highlighting of choice. Current choice state: ${vm.choice.value!!}, selectedCard=$card")
 
@@ -148,6 +147,21 @@ class GameFragment : Fragment() {
             } else {
                 val cardSelected = i == selectedCardIndex
                 vh.setCardSelectedHighlighting(cardSelected)
+            }
+        }
+    }
+
+    private fun highlightCurrentPlayerField() {
+        binding.playerFieldRecycler.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            for (i in 0 until vm.playerCount) {
+                Timber.d("Finding player field #${vm.currentPlayerIndex}: currently showing #$i/${vm.playerCount}")
+                val vh = (binding.playerFieldRecycler.findViewHolderForAdapterPosition(i) ?: return@setOnScrollChangeListener) as PlayerMapAdapter.ViewHolder
+                Timber.d("Finding ==> $i==${vm.currentPlayerIndex} ?")
+                if(i == vm.currentPlayerIndex) {
+                    vh.itemView.background = ResourcesCompat.getDrawable(resources, R.drawable.golden_glow, null)
+                } else {
+                    vh.itemView.background = null
+                }
             }
         }
     }

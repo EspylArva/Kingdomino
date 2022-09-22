@@ -2,14 +2,17 @@ package com.iteration.kingdomino.ui.game
 
 import android.annotation.SuppressLint
 import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.GridLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
+import android.view.WindowMetrics
+import android.widget.*
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.get
+import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.Card
@@ -176,8 +179,18 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         return clTile
     }
 
-    class ViewHolder(private val playerMap: GridLayout) : RecyclerView.ViewHolder(playerMap)
+    class ViewHolder(private val playerMap: GridLayout) : RecyclerView.ViewHolder(LinearLayout(playerMap.context))
     {
+        init {
+            // Necessary to center the ViewHolder
+            val container = (itemView as LinearLayout)
+            container.addView(playerMap)
+            container.gravity = Gravity.CENTER
+            val params = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            container.layoutParams = params
+//            container.background = ResourcesCompat.getDrawable(itemView.resources, R.drawable.golden_glow, null)
+        }
+
         var rowCount: Int
             get() = playerMap.rowCount
             set(value) {playerMap.rowCount = value}
@@ -187,9 +200,8 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
             set(value) {playerMap.columnCount = value}
 
         fun add(clTile: ConstraintLayout, row: Int, col: Int) {
-            val metrics = DisplayMetrics()
-            itemView.context.display?.getRealMetrics(metrics)
-            val size = (metrics.widthPixels * 0.1).toInt()
+            val metrics = itemView.context.getSystemService(WindowManager::class.java).currentWindowMetrics.bounds
+            val size = (metrics.width() * 0.1).toInt()
 
             // Grid cell layout parameters
             val gridParam = GridLayout.LayoutParams()

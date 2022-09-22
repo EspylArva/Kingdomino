@@ -12,11 +12,13 @@ import java.util.stream.Collectors.toList
 
 class GameViewModel(val app : Application) : AndroidViewModel(app) {
 
+    val playerCount: Int get() = playerOrder.size
+
     /**
      * Deck containing all the cards; cards are drawn from the deck to form the choice deck
      */
     lateinit var deck : Stack<Card>
-    lateinit var deckSize : MutableLiveData<Int>
+    var deckSize : MutableLiveData<Int>
 
     /**
      * Map of drawn cards to play, which the players choose cards from.
