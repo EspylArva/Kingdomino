@@ -11,11 +11,13 @@
         <item
             android:id="@id/nav_game"
             android:icon="@drawable/ic_three_crown"
+            android:menuCategory="secondary"
             android:title="@string/menu_game" />
 
         <item
             android:id="@id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
+            android:menuCategory="secondary"
             android:title="@string/menu_settings" />
     </group>
 </menu>
