@@ -152,7 +152,7 @@ class GameFragment : Fragment() {
     }
 
     private fun highlightCurrentPlayerField() {
-        binding.playerFieldRecycler.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        binding.playerFieldRecycler.setOnScrollChangeListener { _,_,_,_,_ ->
             for (i in 0 until vm.playerCount) {
                 Timber.d("Finding player field #${vm.currentPlayerIndex}: currently showing #$i/${vm.playerCount}")
                 val vh = (binding.playerFieldRecycler.findViewHolderForAdapterPosition(i) ?: return@setOnScrollChangeListener) as PlayerMapAdapter.ViewHolder

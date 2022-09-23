@@ -3,21 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group>
         <item
-            android:id="@id/nav_menu"
-            android:icon="@drawable/ic_castle_red"
-            android:title="@string/menu_main_menu" />
+            android:id="@+id/group1"
+            android:checkableBehavior="single"
+            android:title="Game">
+            <menu>
+                <item
+                    android:id="@id/nav_menu"
+                    android:icon="@drawable/ic_castle_red"
+                    android:title="@string/menu_main_menu" />
+                <item
+                    android:id="@id/nav_game"
+                    android:icon="@drawable/ic_three_crown"
+                    android:menuCategory="secondary"
+                    android:title="@string/menu_game" />
+            </menu>
+        </item>
+    </group>
+    <group>
         <item
-            android:id="@id/nav_game"
-            android:icon="@drawable/ic_three_crown"
-            android:menuCategory="secondary"
-            android:title="@string/menu_game" />
-
-        <item
-            android:id="@id/nav_settings"
-            android:icon="@drawable/ic_baseline_settings_24"
-            android:menuCategory="secondary"
-            android:title="@string/menu_settings" />
+            android:id="@+id/group2"
+            android:checkableBehavior="single"
+            android:title="Settings">
+            <menu>
+                <item
+                    android:id="@id/nav_settings"
+                    android:icon="@drawable/ic_baseline_settings_24"
+                    android:menuCategory="secondary"
+                    android:title="@string/menu_settings" />
+            </menu>
+        </item>
     </group>
 </menu>
