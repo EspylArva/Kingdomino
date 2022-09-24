@@ -1,9 +1,11 @@
 package com.iteration.kingdomino.game
 
 import androidx.lifecycle.MutableLiveData
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 import timber.log.Timber
 
-class Player(val name : String) : MutableLiveData<Player>() {
+data class Player(@PrimaryKey val uid:Int, @ColumnInfo(name="player_name") val name : String) : MutableLiveData<Player>() {
     val map = Field()
 
     fun playCard(card: Card, tile1Position: Pair<Int, Int>, tile2Position: Pair<Int, Int>) {

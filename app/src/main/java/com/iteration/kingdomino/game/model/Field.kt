@@ -1,18 +1,20 @@
-package com.iteration.kingdomino.game
+package com.iteration.kingdomino.game.model
 
+import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import timber.log.Timber
+import java.lang.reflect.Type
 import java.util.stream.Collectors.toList
 
-class Field {
-
-    constructor()
-
-    constructor(argField: MutableList<MutableList<Tile>>) {
+//@Entity(foreignKeys = [ForeignKey(entity = Player::class, parentColumns = arrayOf("playerId"), childColumns = arrayOf(), onDelete = ForeignKey.CASCADE)])
+data class Field(val fieldSize: Int) {
+    constructor(argField: MutableList<MutableList<Tile>>) : this(argField.size) {
         field.clear()
         field.addAll(argField)
     }
 
-    val field : MutableList<MutableList<Tile>> = MutableList(9) { MutableList(9) { Tile.nullTile() } }
+    val field : MutableList<MutableList<Tile>> = MutableList(fieldSize*2-1) { MutableList(fieldSize*2-1) { Tile.nullTile() } }
     private val trimmedField
         get() = field.trimmed()
 
@@ -258,6 +260,18 @@ class Field {
             }
         }
         return Field(trimmedField)
+    }
+
+    companion object FieldConverter {
+        @TypeConverter
+        fun fromField(field: Field) : String = Gson().toJson(field.field)
+
+        @TypeConverter
+        fun fromString(value: String?): Field {
+            val listType: Type = object : TypeToken<MutableList<MutableList<Tile>>>() {}.type
+            val field : MutableList<MutableList<Tile>> = Gson().fromJson(value, listType)
+            return Field(field)
+        }
     }
 }
 
