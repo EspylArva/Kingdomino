@@ -30,7 +30,7 @@ data class Field(val fieldSize: Int) {
     private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
 
     val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.collect(toList()).size
-    val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.mapToInt() { it.crown.value }.sum()
+    val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.mapToInt { it.crown.value }.sum()
 
     val castleCentered: Boolean get() {
         val middle = trimmedField.field.size.floorDiv(2)
@@ -145,7 +145,7 @@ data class Field(val fieldSize: Int) {
         return (trimmedFuture.width < 6) and (trimmedFuture.height < 6)
     }
 
-    fun isValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
+    fun tileHasValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
         val x = position.first
         val y = position.second
         val anyValidNeighbour = getNeighboursTypes(x, y).any { terrainType -> terrainType == tile.type || terrainType == Tile.Terrain.CASTLE }
@@ -168,14 +168,14 @@ data class Field(val fieldSize: Int) {
         return sameX || sameY
     }
 
-    fun isNeighbourValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) : Boolean {
-        val tile1ValidNeighbour = isValidNeighbour(tile1Location, card.tile1)
-        val tile2ValidNeighbour = isValidNeighbour(tile2Location, card.tile2)
+    fun cardHasValidNeighbour(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) : Boolean {
+        val tile1ValidNeighbour = tileHasValidNeighbour(tile1Location, card.tile1)
+        val tile2ValidNeighbour = tileHasValidNeighbour(tile2Location, card.tile2)
         Timber.v("Checking if any tile has valid neighbour: tile1ValidNeighbour=$tile1ValidNeighbour tile2ValidNeighbour=$tile2ValidNeighbour")
         return tile1ValidNeighbour || tile2ValidNeighbour
     }
     
-    fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) = isCardTilesAdjacent(tile1Location, tile2Location) && isNeighbourValid(tile1Location, tile2Location, card)
+    fun isCardLocationValid(tile1Location: Pair<Int, Int>, tile2Location: Pair<Int, Int>, card: Card) = isCardTilesAdjacent(tile1Location, tile2Location) && cardHasValidNeighbour(tile1Location, tile2Location, card)
 
     /**
      * Gets the list of the positions of [Tile] neighbouring the given XY coordinates.
@@ -236,7 +236,7 @@ data class Field(val fieldSize: Int) {
 
     class PlayerFieldException(message : String) : Exception(message) {
         private val playerFieldExceptionPrefix = "Invalid action: "
-        override val message: String?
+        override val message: String
             get() = playerFieldExceptionPrefix + super.message
     }
 
