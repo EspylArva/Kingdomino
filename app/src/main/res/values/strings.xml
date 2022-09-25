@@ -38,4 +38,6 @@
 
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="preferences_started_games">shared_preferences_started_games</string>
+    <string name="preferences_ended_games">shared_preferences_ended_games</string>
 </resources>

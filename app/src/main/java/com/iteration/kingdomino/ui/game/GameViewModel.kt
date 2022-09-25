@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.iteration.kingdomino.csvreader.CSVReader
-import com.iteration.kingdomino.game.Card
-import com.iteration.kingdomino.game.Player
+import com.iteration.kingdomino.game.model.Card
+import com.iteration.kingdomino.game.model.Player
 import timber.log.Timber
 import java.util.*
 import java.util.stream.Collectors.toList
@@ -73,7 +73,8 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     init {
         Timber.i("Initializing Game... (Start)")
 
-        playerOrder = mutableMapOf(Pair(Player("John Doe"), 1), Pair(Player("Emily Lee"), 2), Pair(Player("Joseph Staline"), 3), Pair(Player("Chris Tabernacle"), 4))
+        playerOrder = mutableMapOf(Pair(Player("John Doe"), 1), Pair(Player("Emily Lee"), 2), Pair(
+            Player("Joseph Staline"), 3), Pair(Player("Chris Tabernacle"), 4))
         Timber.d("Players=${playerOrder}")
 
         setDeck()       // Draw and shuffle the 48 cards deck

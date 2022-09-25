@@ -1,6 +1,5 @@
 package com.iteration.kingdomino.game.model
 
-import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import timber.log.Timber
@@ -9,10 +8,6 @@ import java.util.stream.Collectors.toList
 
 //@Entity(foreignKeys = [ForeignKey(entity = Player::class, parentColumns = arrayOf("playerId"), childColumns = arrayOf(), onDelete = ForeignKey.CASCADE)])
 data class Field(val fieldSize: Int) {
-    constructor(argField: MutableList<MutableList<Tile>>) : this(argField.size) {
-        field.clear()
-        field.addAll(argField)
-    }
 
     val field : MutableList<MutableList<Tile>> = MutableList(fieldSize*2-1) { MutableList(fieldSize*2-1) { Tile.nullTile() } }
     private val trimmedField
@@ -39,8 +34,13 @@ data class Field(val fieldSize: Int) {
 
     init {
         // Sets the middle of the field to be a castle.
-        // FIXME : should castle have value 0 or 1?
-        field[4][4] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
+        val center = fieldSize-1
+        field[center][center] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
+    }
+
+    constructor(argField: MutableList<MutableList<Tile>>) : this(argField.size) {
+        field.clear()
+        field.addAll(argField)
     }
 
     /**
@@ -263,10 +263,8 @@ data class Field(val fieldSize: Int) {
     }
 
     companion object FieldConverter {
-        @TypeConverter
         fun fromField(field: Field) : String = Gson().toJson(field.field)
 
-        @TypeConverter
         fun fromString(value: String?): Field {
             val listType: Type = object : TypeToken<MutableList<MutableList<Tile>>>() {}.type
             val field : MutableList<MutableList<Tile>> = Gson().fromJson(value, listType)

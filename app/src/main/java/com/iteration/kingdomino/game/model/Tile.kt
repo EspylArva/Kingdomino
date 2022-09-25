@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.game
+package com.iteration.kingdomino.game.model
 
 import com.iteration.kingdomino.R
 

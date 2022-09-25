@@ -1,6 +1,5 @@
 package com.iteration.kingdomino.ui.game
 
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,8 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.game.Player
-import com.iteration.kingdomino.game.Tile
+import com.iteration.kingdomino.game.model.Player
+import com.iteration.kingdomino.game.model.Tile
 
 class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<ScoreAdapter.ViewHolder>() {
 

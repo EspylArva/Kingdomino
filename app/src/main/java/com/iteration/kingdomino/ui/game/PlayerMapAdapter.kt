@@ -1,24 +1,19 @@
 package com.iteration.kingdomino.ui.game
 
-import android.annotation.SuppressLint
-import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
-import android.view.WindowMetrics
 import android.widget.*
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.get
-import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.game.Card
-import com.iteration.kingdomino.game.Field
-import com.iteration.kingdomino.game.Player
-import com.iteration.kingdomino.game.Tile
+import com.iteration.kingdomino.game.model.Card
+import com.iteration.kingdomino.game.model.Field
+import com.iteration.kingdomino.game.model.Player
+import com.iteration.kingdomino.game.model.Tile
 import timber.log.Timber
 
 

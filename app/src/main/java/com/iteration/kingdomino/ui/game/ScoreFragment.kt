@@ -8,12 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.databinding.FragmentScoreBinding
-import com.iteration.kingdomino.game.Player
+import com.iteration.kingdomino.game.model.Player
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

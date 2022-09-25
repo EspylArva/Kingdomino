@@ -2,8 +2,8 @@ package com.iteration.kingdomino.csvreader
 
 import android.content.Context
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.game.Card
-import com.iteration.kingdomino.game.Tile
+import com.iteration.kingdomino.game.model.Card
+import com.iteration.kingdomino.game.model.Tile
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import java.io.InputStreamReader

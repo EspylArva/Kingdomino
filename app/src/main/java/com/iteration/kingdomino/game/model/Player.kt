@@ -1,20 +1,18 @@
-package com.iteration.kingdomino.game
+package com.iteration.kingdomino.game.model
 
 import androidx.lifecycle.MutableLiveData
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import timber.log.Timber
 
-data class Player(@PrimaryKey val uid:Int, @ColumnInfo(name="player_name") val name : String) : MutableLiveData<Player>() {
-    val map = Field()
+//@Entity
+data class Player(val name : String) : MutableLiveData<Player>() {
+    val map = Field(fieldSize=5)
+    val score: Int
+        get() = map.calculateScore()
 
     fun playCard(card: Card, tile1Position: Pair<Int, Int>, tile2Position: Pair<Int, Int>) {
         map.addCard(card, tile1Position, tile2Position)
         postValue(this)
     }
-
-    val score: Int
-        get() = map.calculateScore()
 
     fun computeChoices(card : Card) : List<Pair<Int, Int>>
     {

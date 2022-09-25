@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.setPadding
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.game.Player
+import com.iteration.kingdomino.game.model.Player
 
 
 class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)

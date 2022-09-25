@@ -1,4 +1,4 @@
-package com.iteration.kingdomino.game
+package com.iteration.kingdomino.game.model
 
 data class Card(val id : Int, val tile1 : Tile, val tile2 : Tile) : Comparable<Card>
 {

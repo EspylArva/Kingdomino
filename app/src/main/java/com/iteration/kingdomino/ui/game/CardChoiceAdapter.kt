@@ -1,21 +1,16 @@
 package com.iteration.kingdomino.ui.game
 
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.IntRange
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.ViewholderCardChoiceBinding
-import com.iteration.kingdomino.game.Card
-import com.iteration.kingdomino.game.Tile
+import com.iteration.kingdomino.game.model.Card
+import com.iteration.kingdomino.game.model.Tile
 import timber.log.Timber
 
 class CardChoiceAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<CardChoiceAdapter.ViewHolder>() {

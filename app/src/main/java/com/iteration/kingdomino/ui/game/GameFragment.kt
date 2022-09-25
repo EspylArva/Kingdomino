@@ -15,16 +15,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.*
 import com.iteration.kingdomino.databinding.FragmentGameBinding
+import com.iteration.kingdomino.game.data.DaggerProvider
+import com.iteration.kingdomino.game.data.DataManager
+import com.iteration.kingdomino.game.data.Provider
 import com.iteration.kingdomino.ui.settings.SettingsFragment
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.stream.Collectors.toList
+import javax.inject.Inject
 
 class GameFragment : Fragment() {
 
     private lateinit var vm: GameViewModel
     private var _binding: FragmentGameBinding? = null
     private val binding get() = _binding!!
+
+    private val provider = DaggerProvider.builder().build()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vm = ViewModelProvider(this).get(GameViewModel::class.java)
@@ -85,6 +91,8 @@ class GameFragment : Fragment() {
                 val playerIndex = vm.playerOrder.keys.toList().indexOf(player)
                 Timber.d("Obs: $it updated. Refreshing UI (field #$playerIndex).")
                 binding.playerFieldRecycler.adapter!!.notifyDataSetChanged()
+//                Provider.dataManager().testMethod() // FIXME
+                provider.dataManager().testMethod()
             }
         }
 
@@ -154,9 +162,8 @@ class GameFragment : Fragment() {
     private fun highlightCurrentPlayerField() {
         binding.playerFieldRecycler.setOnScrollChangeListener { _,_,_,_,_ ->
             for (i in 0 until vm.playerCount) {
-                Timber.d("Finding player field #${vm.currentPlayerIndex}: currently showing #$i/${vm.playerCount}")
+                Timber.v("Finding player field #${vm.currentPlayerIndex}: currently showing #$i/${vm.playerCount}")
                 val vh = (binding.playerFieldRecycler.findViewHolderForAdapterPosition(i) ?: return@setOnScrollChangeListener) as PlayerMapAdapter.ViewHolder
-                Timber.d("Finding ==> $i==${vm.currentPlayerIndex} ?")
                 if(i == vm.currentPlayerIndex) {
                     vh.itemView.background = ResourcesCompat.getDrawable(resources, R.drawable.golden_glow, null)
                 } else {
