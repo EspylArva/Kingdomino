@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.model.GameInfo
-import dagger.Module
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.time.ZoneOffset

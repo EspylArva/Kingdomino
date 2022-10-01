@@ -11,18 +11,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
-import com.iteration.kingdomino.components.*
+import com.iteration.kingdomino.components.AdjustableScrollSpeedLinearLayoutManager
+import com.iteration.kingdomino.components.RecyclerDotIndicator
+import com.iteration.kingdomino.components.RecyclerViewMargin
+import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.databinding.FragmentGameBinding
 import com.iteration.kingdomino.game.data.DaggerProvider
-import com.iteration.kingdomino.game.data.DataManager
-import com.iteration.kingdomino.game.data.Provider
 import com.iteration.kingdomino.ui.settings.SettingsFragment
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.stream.Collectors.toList
-import javax.inject.Inject
 
 class GameFragment : Fragment() {
 

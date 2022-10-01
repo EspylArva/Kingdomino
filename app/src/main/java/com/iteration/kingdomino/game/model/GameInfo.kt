@@ -3,7 +3,6 @@ import com.google.gson.Gson
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.*
-import kotlin.collections.HashSet
 
 data class GameInfo(
     val gameId: UUID,

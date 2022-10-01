@@ -64,7 +64,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun buildGameInfo() : GameInfo {
-        val players: Collection<Player>
+        val players: Collection<Player> = listOf()
 
         val gameModifiers = binding.modifierChipsContainer.children
             .filter { it is Chip}
@@ -73,7 +73,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
             .toSet()
 
         val seed = binding.newGameSeed.editText!!.text.toString().toInt()
-        return GameInfo(gameId = UUID.randomUUID(), players = listOf(), modifiers = gameModifiers, seed = seed)
+        return GameInfo(gameId = UUID.randomUUID(), players = players, modifiers = gameModifiers, seed = seed)
     }
 
     companion object {

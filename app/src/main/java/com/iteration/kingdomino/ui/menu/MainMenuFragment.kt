@@ -1,20 +1,13 @@
 package com.iteration.kingdomino.ui.menu
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.FragmentMenuBinding
-import timber.log.Timber
 
 
 class MainMenuFragment : Fragment() {
