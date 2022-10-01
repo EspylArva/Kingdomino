@@ -12,6 +12,11 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_appendix">Appendixes</string>
 
+    <string name="game_modifier_dynasty">Dynasty</string>
+    <string name="game_modifier_middle_kingdom">The Middle Kingdom</string>
+    <string name="game_modifier_harmony">Harmony</string>
+    <string name="game_modifier_mighty_duel">The Mighty Duel</string>
+
     <string name="btn_new_game">New Game</string>
     <string name="btn_continue_game">Continue</string>
     <string name="btn_settings">Settings</string>
@@ -20,12 +25,18 @@
 
     <string name="settings_confirm_on_play">Confirm on play</string>
 
+    <string name="seed">Seed</string>
+    <string name="player_name">Player Name</string>
+    <string name="player_type">Player Type</string>
+
+
     <string name="player_score">Score : %d</string>
     <string name="empty_deck">Empty deck! Shuffling…</string>
     <string name="drawing_cards">Drawing 4 new cards…</string>
     <string name="error_play_tile">Could not play selected tile at this location</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="create_new_game">Create New Game</string>
     <string name="error_wrong_field">Cannot play on another player\'s field. Please play on your own field.</string>
     <string name="confirmPlayCard">Are you sure you want to play card %1$d at the displayed location?</string>
     <string name="error_select_card">Card %1$d has already been used this turn. Cannot re-use a card. Select another one.</string>
