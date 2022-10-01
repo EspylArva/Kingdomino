@@ -19,7 +19,7 @@ class PlayerInfoAdapter : RecyclerView.Adapter<PlayerInfoAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     }
 
-    override fun getItemCount(): Int = 4
+    override fun getItemCount(): Int = 2
 
     class ViewHolder(val binding: ViewholderPlayerInfoBinding) : RecyclerView.ViewHolder(binding.root) {
 

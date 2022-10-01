@@ -1,25 +1,22 @@
 package com.iteration.kingdomino.ui.menu
 
-import android.app.ActionBar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.navigation.findNavController
+import androidx.core.view.children
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.databinding.BottomsheetNewGameBinding
-import com.iteration.kingdomino.databinding.FragmentMenuBinding
 import com.iteration.kingdomino.game.model.GameInfo
 import com.iteration.kingdomino.game.model.Player
-import com.iteration.kingdomino.ui.game.CardChoiceAdapter
 import timber.log.Timber
+import java.util.*
 
 class NewGameBottomSheet : BottomSheetDialogFragment() {
 
@@ -50,16 +47,13 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
         binding.newGameConfirmButton.setOnClickListener {
             // Create new game data
             val gameInfo: GameInfo = buildGameInfo()
+            Timber.d("Building gameInfo\n$gameInfo")
             // Add it to the SharedPreferences
             // Navigate
             findNavController().navigate(R.id.nav_game) //, gameInfo) //FIXME: pass gameInfo
             this.dismiss()
         }
 
-        binding.modifierDynastyCheckBox.setOnClickListener {
-            binding.modifierDynastyCheckBox.isChecked = true
-//            binding.modifierDynastyCheckBox.checkedIconTint =
-        }
     }
 
     private fun setPlayerRecycler() {
@@ -72,8 +66,14 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
     private fun buildGameInfo() : GameInfo {
         val players: Collection<Player>
 
+        val gameModifiers = binding.modifierChipsContainer.children
+            .filter { it is Chip}
+            .filter { (it as Chip).isChecked }
+            .map { (it as Chip).text.toString() }
+            .toSet()
+
         val seed = binding.newGameSeed.editText!!.text.toString().toInt()
-        return GameInfo(gameId = 0, players = listOf(), modifiers = setOf(), seed = seed)
+        return GameInfo(gameId = UUID.randomUUID(), players = listOf(), modifiers = gameModifiers, seed = seed)
     }
 
     companion object {

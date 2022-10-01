@@ -31,9 +31,7 @@ class MainMenuFragment : Fragment() {
 
         // TODO: buttonNewGame.setOnClickListener
         binding.createNewGameButton.setOnClickListener {
-            Timber.d("Testing bottomsheet")
             val bottomSheet = NewGameBottomSheet()
-
             bottomSheet.show(requireActivity().supportFragmentManager, NewGameBottomSheet.TAG)
         }
 
