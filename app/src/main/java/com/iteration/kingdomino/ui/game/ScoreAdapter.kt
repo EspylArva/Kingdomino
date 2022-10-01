@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
+import com.iteration.kingdomino.databinding.ViewholderScorePlayerBinding
 import com.iteration.kingdomino.game.model.Player
 import com.iteration.kingdomino.game.model.Tile
 
@@ -17,7 +18,8 @@ class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.viewholder_score_player, parent, false))
+        val binding = ViewholderScorePlayerBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -29,35 +31,29 @@ class ScoreAdapter(val players: List<Pair<Player, Int>>) : RecyclerView.Adapter<
 
     override fun getItemCount() = players.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
-        private val imgScoreCastle : ImageView = itemView.findViewById(R.id.img_score_player_crown)
-        private val lblPlayer : TextView = itemView.findViewById(R.id.lbl_score_player_name)
-        private val lblCastleCentered : TextView = itemView.findViewById(R.id.lbl_score_centered_castle)
-        private val lblCrownCount : TextView = itemView.findViewById(R.id.lbl_score_crown_count)
-        private val lblDomainSize : TextView = itemView.findViewById(R.id.lbl_score_domain_size)
-        private val lblScore : TextView = itemView.findViewById(R.id.lbl_score_value)
+    class ViewHolder(private val binding: ViewholderScorePlayerBinding) : RecyclerView.ViewHolder(binding.root)  {
 
         init {
             val metrics = itemView.context.getSystemService(WindowManager::class.java).currentWindowMetrics.bounds
             val size = (metrics.width() * 0.2).toInt()
-            imgScoreCastle.layoutParams.height = size
-            imgScoreCastle.layoutParams.width = size
-            lblPlayer.textSize = 36f // FIXME relative size ?
-            lblScore.textSize = 24f
+            binding.imgScorePlayerCrown.layoutParams.height = size
+            binding.imgScorePlayerCrown.layoutParams.width = size
+            binding.lblScorePlayerName.textSize = 36f // FIXME relative size ?
+            binding.lblScoreValue.textSize = 24f
         }
 
         fun setTextContent(player: Player) {
             val res = itemView.resources
             val castleCentered = if(player.map.castleCentered) res.getString(R.string.yes) else res.getString(R.string.no)
-            lblPlayer.text = player.name
-            lblCastleCentered.text = res.getString(R.string.score_castle_centered, castleCentered)
-            lblDomainSize.text = res.getString(R.string.score_domain_size, player.map.domainSize)
-            lblCrownCount.text = res.getString(R.string.score_crown_count, player.map.crownCount)
-            lblScore.text = res.getString(R.string.score_value, player.score.toString())
+            binding.lblScorePlayerName.text = player.name
+            binding.lblScoreCenteredCastle.text = res.getString(R.string.score_castle_centered, castleCentered)
+            binding.lblScoreDomainSize.text = res.getString(R.string.score_domain_size, player.map.domainSize)
+            binding.lblScoreCrownCount.text = res.getString(R.string.score_crown_count, player.map.crownCount)
+            binding.lblScoreValue.text = res.getString(R.string.score_value, player.score.toString())
         }
 
         fun setCastleColor(position: Int) {
-            imgScoreCastle.background = ResourcesCompat.getDrawable(itemView.resources, Tile.CASTLES[position], null)
+            binding.imgScorePlayerCrown.background = ResourcesCompat.getDrawable(itemView.resources, Tile.CASTLES[position], null)
         }
 
     }
