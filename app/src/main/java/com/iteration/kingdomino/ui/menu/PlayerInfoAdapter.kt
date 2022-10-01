@@ -17,8 +17,6 @@ class PlayerInfoAdapter : RecyclerView.Adapter<PlayerInfoAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.newPlayerName.editText!!.setText("Test")
-        holder.binding.playerTypeDropdown.editText!!.setText("Player")
     }
 
     override fun getItemCount(): Int = 4
