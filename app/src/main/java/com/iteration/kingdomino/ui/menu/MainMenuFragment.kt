@@ -1,15 +1,21 @@
 package com.iteration.kingdomino.ui.menu
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.view.WindowManager
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.FragmentMenuBinding
+import timber.log.Timber
+
 
 class MainMenuFragment : Fragment() {
     private var _binding: FragmentMenuBinding? = null
@@ -24,6 +30,12 @@ class MainMenuFragment : Fragment() {
     private fun initListeners() {
 
         // TODO: buttonNewGame.setOnClickListener
+        binding.createNewGameButton.setOnClickListener {
+            Timber.d("Testing bottomsheet")
+            val bottomSheet = NewGameBottomSheet()
+
+            bottomSheet.show(requireActivity().supportFragmentManager, NewGameBottomSheet.TAG)
+        }
 
         binding.continueCurrentGameButton.setOnClickListener {
             findNavController().navigate(R.id.nav_game)
