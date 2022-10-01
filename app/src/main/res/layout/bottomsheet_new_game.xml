@@ -80,12 +80,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addPlayerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_player_button"
+        android:layout_margin="@dimen/dis"
+        app:layout_constraintTop_toBottomOf="@id/newGamePlayersRecycler"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <LinearLayout
         android:id="@+id/newGameAdvancedParametersContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dis"
-        app:layout_constraintTop_toBottomOf="@id/newGamePlayersRecycler"
+        app:layout_constraintTop_toBottomOf="@id/addPlayerButton"
         app:layout_constraintBottom_toTopOf="@id/newGameConfirmButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

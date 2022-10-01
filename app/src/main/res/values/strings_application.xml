@@ -7,10 +7,6 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_appendix">Appendixes</string>
 
-
-
-
-
     <!-- Dialogs -->
     <string name="confirmPlayCard">Are you sure you want to play card %1$d at the displayed location?</string>
     <string name="no">No</string>
