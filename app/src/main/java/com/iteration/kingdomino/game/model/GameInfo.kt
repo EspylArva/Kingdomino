@@ -2,9 +2,11 @@ package com.iteration.kingdomino.game.model;
 import com.google.gson.Gson
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
+import java.util.*
+import kotlin.collections.HashSet
 
 data class GameInfo(
-    val gameId: Int,
+    val gameId: UUID,
     val players: Collection<Player>,
     val modifiers: Set<String>,
     var seed: Int ) {
@@ -22,7 +24,17 @@ data class GameInfo(
         lastUpdateDate = now()
     }
 
+    fun toJson() : String = Gson().toJson(this)
+
     override fun toString(): String {
-        return Gson().toJson(this)
+        val summaryBuilder = StringBuilder()
+        summaryBuilder.append("===== Game #$gameId (seed=$seed) =====\n")
+            .append("    . modifiers: $modifiers\n")
+            .append("    . players: ${players.map { it.name }}\n")
+            .append("--- Game state ---") //TODO: Add game state
+            .append("=============================================")
+
+
+        return summaryBuilder.toString()
     }
 }

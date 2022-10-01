@@ -87,7 +87,7 @@ class DataManager @Inject constructor() {
         val startedGames = context.getSharedPreferences(startedGamesFile, Context.MODE_PRIVATE)
 
         with(startedGames.edit()) {
-            putString(gameInfo.gameId.toString(), gameInfo.toString())
+            putString(gameInfo.gameId.toString(), gameInfo.toJson())
             apply()
         }
 
