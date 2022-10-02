@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.iteration.kingdomino.BR
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
@@ -31,7 +33,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomsheetNewGameBinding? = null
     val binding get() = _binding!!
 
-    val players = mutableListOf(Player.Data(generateName()), Player.Data(generateName()))
+    val players = mutableListOf<Player.Data>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomsheetNewGameBinding.inflate(inflater)
@@ -45,6 +47,9 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
 
     private fun setViews() {
         binding.newGameSeed.editText!!.setText(generateNewSeed().toString())
+
+        players.add(Player.Data(generateName()))
+        players.add(Player.Data(generateName()))
     }
 
 
@@ -95,8 +100,14 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
         return generateSequence { (1..65536).random() }.first { !seeds.contains(it) }
     }
 
-    private fun generateName() : String {
-        return "Robert" // FIXME
+    private fun generateName(locale: String = "en") : String {
+        resources.openRawResource(R.raw.names).use {
+            val json = it.reader().readLines().joinToString("")
+            val typeToken = object : TypeToken<Map<String, List<String>>>() {}.type
+            val jObject : Map<String, List<String>> = Gson().fromJson(json, typeToken)
+            Timber.d("Json=$json JsonObject=$jObject")
+            return jObject[locale]!!.random()
+        }
     }
 
     companion object {
