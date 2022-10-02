@@ -24,15 +24,28 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/player_type"
+        android:layout_marginEnd="@dimen/dis"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/newPlayerName"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/removePlayerButton"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
         <AutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="none"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/removePlayerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:maxImageSize="56dp"
+        app:backgroundTint="@color/transparent"
+        android:src="@drawable/ic_baseline_cancel_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/playerTypeDropdown"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

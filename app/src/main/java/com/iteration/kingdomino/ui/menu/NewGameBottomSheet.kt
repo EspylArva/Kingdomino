@@ -5,10 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.databinding.Bindable
+import androidx.databinding.Observable
+import androidx.databinding.Observable.OnPropertyChangedCallback
+import androidx.databinding.PropertyChangeRegistry
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import com.iteration.kingdomino.BR
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
@@ -21,7 +29,9 @@ import java.util.*
 class NewGameBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: BottomsheetNewGameBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
+
+    val players = mutableListOf(Player.Data(generateName()), Player.Data(generateName()))
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomsheetNewGameBinding.inflate(inflater)
@@ -37,11 +47,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
         binding.newGameSeed.editText!!.setText(generateNewSeed().toString())
     }
 
-    private fun generateNewSeed(): Int {
-        // FIXME: get the list of seeds from DAO
-        val seeds = setOf<Int>()
-        return generateSequence { (1..65536).random() }.first { !seeds.contains(it) }
-    }
+
 
     private fun setListeners() {
         binding.newGameConfirmButton.setOnClickListener {
@@ -54,17 +60,24 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
             this.dismiss()
         }
 
+        binding.addPlayerButton.setOnClickListener {
+            players.add(Player.Data(generateName()))
+            binding.newGamePlayersRecycler.adapter!!.notifyItemInserted(players.size-1)
+        }
+
+
     }
 
     private fun setPlayerRecycler() {
         binding.newGamePlayersRecycler.setHasFixedSize(true)
-        binding.newGamePlayersRecycler.adapter = PlayerInfoAdapter()
+        binding.newGamePlayersRecycler.adapter = PlayerInfoAdapter(players)
         binding.newGamePlayersRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.newGamePlayersRecycler.addItemDecoration(RecyclerViewMargin(Utils.pxToDp(2, requireContext()), 4))
     }
 
+
     private fun buildGameInfo() : GameInfo {
-        val players: Collection<Player> = listOf()
+        val listPlayer = players.map { Player(it) }
 
         val gameModifiers = binding.modifierChipsContainer.children
             .filter { it is Chip}
@@ -73,7 +86,17 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
             .toSet()
 
         val seed = binding.newGameSeed.editText!!.text.toString().toInt()
-        return GameInfo(gameId = UUID.randomUUID(), players = players, modifiers = gameModifiers, seed = seed)
+        return GameInfo(gameId = UUID.randomUUID(), players = listPlayer, modifiers = gameModifiers, seed = seed)
+    }
+
+    private fun generateNewSeed(): Int {
+        // FIXME: get the list of seeds from DAO
+        val seeds = setOf<Int>()
+        return generateSequence { (1..65536).random() }.first { !seeds.contains(it) }
+    }
+
+    private fun generateName() : String {
+        return "Robert" // FIXME
     }
 
     companion object {
