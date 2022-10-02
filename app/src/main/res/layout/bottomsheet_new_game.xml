@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +10,6 @@
             type="com.iteration.kingdomino.ui.menu.NewGameBottomSheet" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomDrawer"
         android:layout_width="match_parent"
         android:layout_height="600dp">
 
@@ -81,12 +79,16 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/newGamePlayersRecycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             android:layout_margin="@dimen/dis"
-            app:layout_constraintTop_toBottomOf="@id/modifierChipsContainer"
-            app:layout_constraintBottom_toTopOf="@id/newGameAdvancedParametersContainer"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/addPlayerButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="spread"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/modifierChipsContainer"
+            tools:listitem="@layout/viewholder_player_info"
+            tools:itemCount="4"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/addPlayerButton"
@@ -128,6 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/create_new_game"
+            android:visibility="@{(viewmodel.players.size() >= 4) ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

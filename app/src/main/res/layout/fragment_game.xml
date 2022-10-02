@@ -56,5 +56,9 @@
         android:layout_margin="@dimen/dis"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        tools:listitem="@layout/viewholder_card_choice"
+        tools:itemCount="4"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
