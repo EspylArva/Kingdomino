@@ -101,6 +101,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun generateName(locale: String = "en") : String {
+        // FIXME Should probably get the locale here instead of be given as param
         resources.openRawResource(R.raw.names).use {
             val json = it.reader().readLines().joinToString("")
             val typeToken = object : TypeToken<Map<String, List<String>>>() {}.type
