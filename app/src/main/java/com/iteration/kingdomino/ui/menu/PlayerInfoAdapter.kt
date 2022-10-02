@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.widget.addTextChangedListener
+import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.iteration.kingdomino.R
@@ -12,7 +13,7 @@ import com.iteration.kingdomino.databinding.ViewholderPlayerInfoBinding
 import com.iteration.kingdomino.game.model.Player
 import timber.log.Timber
 
-class PlayerInfoAdapter(val players: MutableList<Player.Data>) : RecyclerView.Adapter<PlayerInfoAdapter.ViewHolder>() {
+class PlayerInfoAdapter(val players: ObservableArrayList<Player.Data>) : RecyclerView.Adapter<PlayerInfoAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ViewholderPlayerInfoBinding.inflate(inflater, parent, false)
@@ -39,7 +40,7 @@ class PlayerInfoAdapter(val players: MutableList<Player.Data>) : RecyclerView.Ad
         fun setListeners() {
             binding.removePlayerButton.setOnClickListener {
                 Timber.d("Removing item at adapterPosition=$adapterPosition")
-                adapter.players.removeAt(adapterPosition)
+                adapter.players.apply { removeAt(adapterPosition) }
                 adapter.notifyItemRemoved(adapterPosition)
             }
 

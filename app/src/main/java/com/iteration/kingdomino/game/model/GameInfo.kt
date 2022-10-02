@@ -30,7 +30,7 @@ data class GameInfo(
         summaryBuilder.append("===== Game #$gameId (seed=$seed) =====\n")
             .append("    . modifiers: $modifiers\n")
             .append("    . players: ${players.map { it.name }}\n")
-            .append("--- Game state ---") //TODO: Add game state
+            .append("--- Game state ---\n") //TODO: Add game state
             .append("=============================================")
 
 

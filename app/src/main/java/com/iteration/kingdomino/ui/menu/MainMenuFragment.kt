@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.databinding.FragmentMenuBinding
 
@@ -25,6 +28,10 @@ class MainMenuFragment : Fragment() {
         // TODO: buttonNewGame.setOnClickListener
         binding.createNewGameButton.setOnClickListener {
             val bottomSheet = NewGameBottomSheet()
+            // https://stackoverflow.com/questions/36030879/bottomsheetdialogfragment-how-to-set-expanded-height-or-min-top-offset
+//            bottomSheet.setStyle(STYLE_NORMAL, R.style.AppTheme)
+
+//            behaviour.peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
             bottomSheet.show(requireActivity().supportFragmentManager, NewGameBottomSheet.TAG)
         }
 
