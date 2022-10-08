@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/unselected"
     android:layout_margin="@dimen/dis">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +29,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:enabled="false"
+                android:cursorVisible="false"
+                android:focusable="false"
                 tools:text="AAAAAAAAAAAA"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,7 +47,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:enabled="false"
+                android:cursorVisible="false"
+                android:focusable="false"
                 tools:text="AAAAAAAAAAAA"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,7 +65,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:enabled="false"
+                android:cursorVisible="false"
+                android:focusable="false"
                 tools:text="10/15/1998"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,7 +83,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:enabled="false"
+                android:cursorVisible="false"
+                android:focusable="false"
                 tools:text="25/12/2022"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,5 +130,13 @@
             android:layout_height="wrap_content"
             android:text="@string/game_modifier_mighty_duel"/>
     </com.google.android.material.chip.ChipGroup>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gameInfoFilter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

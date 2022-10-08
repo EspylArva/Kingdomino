@@ -31,7 +31,7 @@ class GameInfoAdapter(val gameInfos: List<GameInfo>) : RecyclerView.Adapter<Game
         // TODO Chip?
         holder.setChips(gameInfo.modifiers)
 
-        holder.itemView.setOnClickListener {
+        holder.binding.gameInfoFilter.setOnClickListener {
             Toast.makeText(holder.itemView.context, "Loading game ${gameInfo.gameId}", Toast.LENGTH_SHORT).show()
             val action = LoadGameBottomSheetDirections.actionMenuToGame(gameInfo.gameId)
             findNavController(holder.itemView.findFragment()).navigate(action)
