@@ -143,4 +143,20 @@ class DataManager @Inject constructor() {
         Timber.i("Accessing data manager")
     }
 
+    fun clearSharedPreferences(context: Context) {
+        val startedGamesFile = context.getString(R.string.preferences_started_games)
+        val startedGames = context.getSharedPreferences(startedGamesFile, Context.MODE_PRIVATE)
+        with(startedGames.edit()) {
+            clear()
+            apply()
+        }
+
+        val endedGamesFile = context.getString(R.string.preferences_ended_games)
+        val endedGames = context.getSharedPreferences(endedGamesFile, Context.MODE_PRIVATE)
+        with(endedGames.edit()) {
+            clear()
+            apply()
+        }
+    }
+
 }
