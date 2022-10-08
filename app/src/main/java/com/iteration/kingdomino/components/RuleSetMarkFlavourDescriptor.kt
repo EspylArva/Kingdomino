@@ -59,18 +59,14 @@ open class RuleSetMarkFlavourDescriptor(_useSafeLinks: Boolean = true, _absoluti
         }
         mapOfProviderByElementType[MarkdownElementTypes.CODE_SPAN] = object : GeneratingProvider {
             override fun processNode(visitor: HtmlGenerator.HtmlGeneratingVisitor, text: String, node: ASTNode) {
-
                 val output = node.children.subList(1, node.children.size - 1)
                     .joinToString("") { HtmlGenerator.leafText(text, it, false) }
                     .trim()
-                Timber.d("Code span! output=$output")
-
                 visitor.consumeTagOpen(node, "code")
                 visitor.consumeHtml(output)
                 visitor.consumeTagClose("code")
             }
         }
-
         return mapOfProviderByElementType
     }
 
@@ -116,13 +112,13 @@ open class RuleSetMarkFlavourDescriptor(_useSafeLinks: Boolean = true, _absoluti
         override fun createMarkerBlocks(pos: LookaheadText.Position, productionHolder: ProductionHolder, stateInfo: org.intellij.markdown.parser.MarkerProcessor.StateInfo):
                 List<MarkerBlock> {
             val fenceAndInfo = getFenceStartAndInfo(pos, stateInfo.currentConstraints)
-            if (fenceAndInfo != null) {
+            return if (fenceAndInfo != null) {
                 createNodesForFenceStart(pos, fenceAndInfo, productionHolder)
                 val codeblocks = listOf(CodeFenceMarkerBlock(stateInfo.currentConstraints, productionHolder, fenceAndInfo.first))
                 Timber.d("Parsed code block: $codeblocks")
-                return codeblocks
+                codeblocks
             } else {
-                return emptyList()
+                emptyList()
             }
         }
 
@@ -133,7 +129,7 @@ open class RuleSetMarkFlavourDescriptor(_useSafeLinks: Boolean = true, _absoluti
         private fun createNodesForFenceStart(pos: LookaheadText.Position, fenceAndInfo: Pair<String, String>, productionHolder: ProductionHolder) {
             val infoStartPosition = pos.nextLineOrEofOffset - fenceAndInfo.second.length
             productionHolder.addProduction(listOf(SequentialParser.Node(pos.offset..infoStartPosition, MarkdownTokenTypes.CODE_FENCE_START)))
-            if (fenceAndInfo.second.length > 0) {
+            if (fenceAndInfo.second.isNotEmpty()) {
                 productionHolder.addProduction(listOf(SequentialParser.Node(infoStartPosition..pos.nextLineOrEofOffset, MarkdownTokenTypes.FENCE_LANG)))
             }
         }
@@ -142,8 +138,7 @@ open class RuleSetMarkFlavourDescriptor(_useSafeLinks: Boolean = true, _absoluti
             if (!MarkerBlockProvider.isStartOfLineWithConstraints(pos, constraints)) {
                 return null
             }
-            val matchResult = REGEX.find(pos.currentLineFromPosition)
-                ?: return null
+            val matchResult = REGEX.find(pos.currentLineFromPosition) ?: return null
             return Pair(matchResult.groups[1]?.value!!, matchResult.groups[2]?.value!!)
         }
 
