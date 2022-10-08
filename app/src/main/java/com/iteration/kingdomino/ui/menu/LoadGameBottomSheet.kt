@@ -32,10 +32,10 @@ class LoadGameBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setGameInfoRecycler() {
-
+        dataManager.displaySharedPreferences(requireContext())
         val startedGames = dataManager.getStartedGames(requireContext())
 
-        Timber.d("Games loaded from shared preferences: $startedGames")
+        Timber.d("Games loaded from shared preferences:\n${startedGames.joinToString("\n\n") {it.toString()}}")
 
         binding.currentGameRecycler.setHasFixedSize(true)
         binding.currentGameRecycler.adapter = GameInfoAdapter(startedGames)

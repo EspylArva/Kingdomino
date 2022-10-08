@@ -3,10 +3,12 @@ package com.iteration.kingdomino.ui.menu
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.children
 import androidx.fragment.app.findFragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.iteration.kingdomino.databinding.ViewholderGameInfoBinding
 import com.iteration.kingdomino.game.model.GameInfo
 
@@ -23,7 +25,11 @@ class GameInfoAdapter(val gameInfos: List<GameInfo>) : RecyclerView.Adapter<Game
 
         holder.binding.gameInfoSeed.editText!!.setText(gameInfo.seed.toString())
         holder.binding.gameInfoUID.editText!!.setText(gameInfo.gameId.toString())
+        holder.binding.gameInfoCreatedDate.editText!!.setText(gameInfo.creationDate.toString())
+        holder.binding.gameInfoUpdatedDate.editText!!.setText(gameInfo.lastUpdateDate.toString())
+
         // TODO Chip?
+        holder.setChips(gameInfo.modifiers)
 
         holder.itemView.setOnClickListener {
             Toast.makeText(holder.itemView.context, "Loading game ${gameInfo.gameId}", Toast.LENGTH_SHORT).show()
@@ -35,6 +41,13 @@ class GameInfoAdapter(val gameInfos: List<GameInfo>) : RecyclerView.Adapter<Game
     override fun getItemCount(): Int = gameInfos.size
 
     class ViewHolder(val binding: ViewholderGameInfoBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun setChips(modifiers: Set<String>) {
+            binding.modifierChipsContainer.children
+                .filter { it is Chip }
+                .filter { modifiers.contains((it as Chip).text) }
+                .forEach { (it as Chip).isChecked = true }
+        }
 
     }
 }
