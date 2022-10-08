@@ -13,13 +13,27 @@
         <action
             android:id="@+id/action_menu_to_appendix"
             app:destination="@id/nav_appendix"/>
+        <action
+            android:id="@+id/action_menu_to_new_game"
+            app:destination="@id/nav_new_game"/>
+        <action
+            android:id="@+id/action_menu_to_load_game"
+            app:destination="@id/nav_load_game"/>
+        <action
+            android:id="@+id/action_menu_to_settings"
+            app:destination="@id/nav_settings"/>
     </fragment>
 
     <fragment
         android:id="@+id/nav_game"
         android:name="com.iteration.kingdomino.ui.game.GameFragment"
         android:label="@string/menu_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game">
+        <argument
+            android:name="game_id"
+            android:defaultValue="0"
+            app:argType="java.util.UUID"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"
@@ -36,5 +50,25 @@
             android:name="page_content"
             android:defaultValue="0"
             app:argType="integer"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_new_game"
+        android:name="com.iteration.kingdomino.ui.menu.NewGameBottomSheet"
+        android:label="@string/menu_new_game"
+        tools:layout="@layout/bottomsheet_new_game">
+        <action
+            android:id="@+id/action_menu_to_game"
+            app:destination="@id/nav_game"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_load_game"
+        android:name="com.iteration.kingdomino.ui.menu.LoadGameBottomSheet"
+        android:label="@string/menu_load_game"
+        tools:layout="@layout/bottomsheet_continue_game">
+        <action
+            android:id="@+id/action_menu_to_game"
+            app:destination="@id/nav_game"/>
     </fragment>
 </navigation>
