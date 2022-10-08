@@ -20,25 +20,34 @@ import com.iteration.kingdomino.R
 import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.databinding.BottomsheetNewGameBinding
+import com.iteration.kingdomino.game.data.DaggerProvider
+import com.iteration.kingdomino.game.data.DataManager
 import com.iteration.kingdomino.game.model.GameInfo
 import com.iteration.kingdomino.game.model.Player
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
 class NewGameBottomSheet : BottomSheetDialogFragment(), Observable {
 
     private var _binding: BottomsheetNewGameBinding? = null
     val binding get() = _binding!!
 
+    @Inject
+    lateinit var dataManager: DataManager
+
     val players = ObservableArrayList<Player.Data>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.bottomsheet_new_game, container, false)
 
+        dataManager = DaggerProvider.create().dataManager()
+
+        // https://stackoverflow.com/questions/36030879/bottomsheetdialogfragment-how-to-set-expanded-height-or-min-top-offset
         val behaviour = (dialog as BottomSheetDialog).behavior
         behaviour.isFitToContents = false
         behaviour.peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
-//        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+        // behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 
 
         setViews()
@@ -62,9 +71,13 @@ class NewGameBottomSheet : BottomSheetDialogFragment(), Observable {
             // Create new game data
             val gameInfo: GameInfo = buildGameInfo()
             Timber.d("Building gameInfo\n$gameInfo")
+
             // Add it to the SharedPreferences
+            dataManager.saveStartedGame(requireContext(), gameInfo)
+
             // Navigate
-            findNavController().navigate(R.id.nav_game) //, gameInfo) //FIXME: pass gameInfo
+            val action = NewGameBottomSheetDirections.actionMenuToGame(gameInfo.gameId)
+            findNavController().navigate(action)
             this.dismiss()
         }
 
