@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.chip.ChipGroup
             android:id="@+id/modifierChipsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,8 +55,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/game_modifier_harmony"
-                 />
+                android:text="@string/game_modifier_harmony"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/modifierMightyDuelCheckBox"
@@ -64,17 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/game_modifier_mighty_duel"/>
-
-            <androidx.constraintlayout.helper.widget.Flow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:flow_wrapMode="aligned"
-                android:orientation="horizontal"
-                app:flow_horizontalAlign="start"
-                app:flow_maxElementsWrap="4"
-                app:constraint_referenced_ids="modifierDynastyCheckBox, modifierMiddleKingdomCheckBox, modifierHarmonyCheckBox, modifierMightyDuelCheckBox"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/newGamePlayersRecycler"
