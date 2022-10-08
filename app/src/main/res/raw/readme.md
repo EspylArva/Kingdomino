@@ -4,13 +4,14 @@
 
 ### The tabletop game
 Kingdomino is a strategic free-for-all battle for territory management, where players compete with each other to build the wealthiest kingdom.
-As the game editor describes it:
-
+As the game editor describes it:  
+<!-- end of the code -->
 ```
 In Kingdomino, the more connected plots of the same landscape you have, the more points you gain.
 But be careful: if you don’t have the related buildings you won’t score any point!
 Build your kingdom and try to have the most glorious one!
 ```
+<!-- end of the code -->
 
 [Kingdomino is a a tabletop game edited by Blue Orange](https://blueorangegames.eu/fr/jeux/kingdomino/).
 
@@ -46,8 +47,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+<!-- end of the code -->
 
 ```
 TODO : include Kingdomino license
 I do not own nor claim rights to Kingdomino. Please don't send me to jail for porting tabletop games on android.
 ```
+<!-- end of the code -->
