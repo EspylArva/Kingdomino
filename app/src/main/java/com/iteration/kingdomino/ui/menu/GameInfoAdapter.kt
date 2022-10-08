@@ -42,6 +42,10 @@ class GameInfoAdapter(val gameInfos: List<GameInfo>) : RecyclerView.Adapter<Game
 
     class ViewHolder(val binding: ViewholderGameInfoBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.modifierChipsContainer.children.forEach { it.isClickable = false }
+        }
+
         fun setChips(modifiers: Set<String>) {
             binding.modifierChipsContainer.children
                 .filter { it is Chip }

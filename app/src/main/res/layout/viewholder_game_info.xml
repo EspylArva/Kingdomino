@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gameInfoContainer"
+        android:padding="@dimen/dis"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:hint="Game UID"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gameInfoCreatedDate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/gameInfoSeed"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/seed"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gameInfoUpdatedDate"
             app:layout_constraintStart_toEndOf="@id/gameInfoUID"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -89,6 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:padding="@dimen/dis"
         app:layout_constraintTop_toBottomOf="@id/gameInfoContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +101,6 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/game_modifier_dynasty"/>
 
         <com.google.android.material.chip.Chip
@@ -107,7 +108,6 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/game_modifier_middle_kingdom"/>
 
         <com.google.android.material.chip.Chip
@@ -115,7 +115,6 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/game_modifier_harmony"
             />
 
@@ -124,7 +123,6 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="@string/game_modifier_mighty_duel"/>
     </com.google.android.material.chip.ChipGroup>
 
