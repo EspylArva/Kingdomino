@@ -31,7 +31,6 @@
         tools:layout="@layout/fragment_game">
         <argument
             android:name="game_id"
-            android:defaultValue="0"
             app:argType="java.util.UUID"/>
     </fragment>
 
@@ -52,7 +51,7 @@
             app:argType="integer"/>
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/nav_new_game"
         android:name="com.iteration.kingdomino.ui.menu.NewGameBottomSheet"
         android:label="@string/menu_new_game"
@@ -60,15 +59,15 @@
         <action
             android:id="@+id/action_menu_to_game"
             app:destination="@id/nav_game"/>
-    </fragment>
+    </dialog>
 
-    <fragment
+    <dialog
         android:id="@+id/nav_load_game"
         android:name="com.iteration.kingdomino.ui.menu.LoadGameBottomSheet"
         android:label="@string/menu_load_game"
-        tools:layout="@layout/bottomsheet_continue_game">
+        tools:layout="@layout/bottomsheet_load_game">
         <action
             android:id="@+id/action_menu_to_game"
             app:destination="@id/nav_game"/>
-    </fragment>
+    </dialog>
 </navigation>
