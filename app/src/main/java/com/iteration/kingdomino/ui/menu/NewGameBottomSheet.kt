@@ -43,15 +43,7 @@ class NewGameBottomSheet : BottomSheetDialogFragment(), Observable {
 
         dataManager = DaggerProvider.create().dataManager()
 
-        // https://stackoverflow.com/questions/36030879/bottomsheetdialogfragment-how-to-set-expanded-height-or-min-top-offset
-        val behaviour = (dialog as BottomSheetDialog).behavior
-        behaviour.isFitToContents = false
-        behaviour.peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
-        // behaviour.state = BottomSheetBehavior.STATE_EXPANDED
-
-
         setViews()
-
         setPlayerRecycler()
         setListeners()
         return binding.root
