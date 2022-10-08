@@ -90,8 +90,6 @@ class GameFragment : Fragment() {
                 val playerIndex = vm.playerOrder.keys.toList().indexOf(player)
                 Timber.d("Obs: $it updated. Refreshing UI (field #$playerIndex).")
                 binding.playerFieldRecycler.adapter!!.notifyDataSetChanged()
-//                Provider.dataManager().testMethod() // FIXME
-                provider.dataManager().testMethod()
             }
         }
 
