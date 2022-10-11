@@ -7,9 +7,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.children
 import androidx.core.view.setPadding
 import com.iteration.kingdomino.R
 import com.iteration.kingdomino.game.model.Player
+import timber.log.Timber
 
 
 class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeSet? = null, defStyleAttr : Int = 0)
@@ -78,5 +80,12 @@ class GameHeader @JvmOverloads constructor(var ctx : Context, attrs : AttributeS
         }
 
         addSep()
+    }
+
+    fun showPositionPointDiff(currentPlayerIndex: Int, pointDiff: Int) {
+        Timber.d("Point diff=$pointDiff")
+//        listLayouts[currentPlayerIndex].children
+//            .filter { (it as TextView).text.contains("Score") }
+//            .forEach { (it as TextView).text = "${it.text} (+$pointDiff)" }
     }
 }

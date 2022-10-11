@@ -9,6 +9,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.iteration.kingdomino.R
@@ -18,6 +19,8 @@ import com.iteration.kingdomino.components.RecyclerViewMargin
 import com.iteration.kingdomino.components.Utils
 import com.iteration.kingdomino.databinding.FragmentGameBinding
 import com.iteration.kingdomino.game.data.DaggerProvider
+import com.iteration.kingdomino.game.model.GameInfo
+import com.iteration.kingdomino.ui.appendix.AppendixFragmentArgs
 import com.iteration.kingdomino.ui.settings.SettingsFragment
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -29,10 +32,14 @@ class GameFragment : Fragment() {
     private var _binding: FragmentGameBinding? = null
     private val binding get() = _binding!!
 
-    private val provider = DaggerProvider.builder().build()
+    private val args: GameFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        vm = ViewModelProvider(this).get(GameViewModel::class.java)
+    private val provider = DaggerProvider.create()
+
+    private fun getGameState() : GameInfo = provider.dataManager().getGameById(requireContext(), args.gameId)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        vm = ViewModelProvider(this)[GameViewModel::class.java]
         _binding = FragmentGameBinding.inflate(inflater)
 
         buildCardChoiceRecycler()
@@ -121,15 +128,19 @@ class GameFragment : Fragment() {
             // Display ghost
             val mapAdapter = binding.playerFieldRecycler.adapter!! as PlayerMapAdapter
             val viewHolder = binding.playerFieldRecycler.findViewHolderForAdapterPosition(vm.currentPlayerIndex) ?: return@Observer
-            mapAdapter.showGhost(vm.currentPlayer!!, viewHolder as PlayerMapAdapter.ViewHolder)
+            mapAdapter.showGhost(vm.currentPlayer, viewHolder as PlayerMapAdapter.ViewHolder)
+
+            if(vm.playerCardSelection.value != null){
+                val pointDiff = vm.currentPlayer.getPointDiffFor(vm.playerCardSelection.value!!, it)
+                binding.playerInfoHeader.showPositionPointDiff(vm.currentPlayerIndex, pointDiff)
+            }
         })
 
         vm.deckSize.observe(viewLifecycleOwner) {
             if(it == 0) {
                 val players = vm.playerOrder.keys.stream().map { player -> Pair(player, vm.playerOrder.keys.indexOf(player)) }.collect(toList())
                 players.sortByDescending { pair -> pair.first.score }
-                // FIXME: second argument should be list of modifiers (game mods)
-                ScoreFragment(LocalDateTime.now(), listOf(), players).show(childFragmentManager, ScoreFragment.TAG)
+                ScoreFragment(LocalDateTime.now(), getGameState().modifiers.toList(), players).show(childFragmentManager, ScoreFragment.TAG)
             }
         }
     }
@@ -169,9 +180,6 @@ class GameFragment : Fragment() {
             }
         }
     }
-
-
-
 
     /**
      * Sets up the card choice recycler parameters.
