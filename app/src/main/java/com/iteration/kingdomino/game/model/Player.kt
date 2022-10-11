@@ -37,11 +37,26 @@ data class Player(val name : String) : MutableLiveData<Player>() {
     fun debugPlayer() {
         Timber.d("Player $name currently has a score of ${score}.")
         Timber.d("Representation of their board:\n$map")
-        // TODO
     }
 
     override fun toString(): String {
         return "[Player: name=$name currentScore=${score}]"
+    }
+
+    fun getPointDiffFor(card: Card, positions: MutableList<Pair<Int, Int>>): Int {
+        Timber.d("Point diff: card=$card positions=$positions")
+        val possibleMap = map.clone()
+        if (positions.isNotEmpty()) {
+            possibleMap.addTile(card.tile1, positions[0])
+        }
+        if (positions.size > 1) {
+            possibleMap.addTile(card.tile2, positions[1])
+        }
+
+        Timber.d("Point diff ==> possible (score=${possibleMap.calculateScore()})\n${possibleMap.field.mapAsString()}")
+        Timber.d("Point diff ==> current  (score=${map.calculateScore()})\n${map.field.mapAsString()}")
+
+        return possibleMap.calculateScore() - map.calculateScore()
     }
 
     data class Data(var name: String) {
