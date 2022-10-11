@@ -13,6 +13,7 @@ import java.lang.reflect.Type
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -120,13 +121,16 @@ class DataManager @Inject constructor() {
         }
     }
 
-    fun getGameById(context: Context, gameId: Int) : GameInfo {
+    fun getGameById(context: Context, gameId: UUID) : GameInfo {
         val startedGamesFile = context.getString(R.string.preferences_started_games)
         val startedGames = context.getSharedPreferences(startedGamesFile, Context.MODE_PRIVATE)
 
         val gameData = startedGames.getString(gameId.toString(), null)
         val type: Type = object : TypeToken<GameInfo>() {}.type
-        return Gson().fromJson(gameData, type)
+        return GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java,
+                JsonDeserializer {json, _, _ -> return@JsonDeserializer ZonedDateTime.parse(json.asString).toLocalDateTime()})
+            .create().fromJson(gameData, type)
     }
 
     fun deleteStartedGame(context: Context, gameId: Int) {

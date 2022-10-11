@@ -46,7 +46,7 @@ class GameViewModel(val app : Application) : AndroidViewModel(app) {
     /**
      * Gets the current player. // FIXME: replace usages of players.value!![0] by currentPlayer
      */
-    val currentPlayer : Player?
+    val currentPlayer : Player
         get() = players.value!!.first()
 
     /**
