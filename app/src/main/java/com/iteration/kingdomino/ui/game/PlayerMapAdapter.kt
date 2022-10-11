@@ -52,8 +52,6 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
                 val clTile = generateTileConstraintLayout(holder, typeDrawableId, crownDrawableId)
                 holder.add(clTile, row, col)
                 clTile.setOnClickListener {
-                    Toast.makeText(holder.itemView.context, "Clicked @$row x $col", Toast.LENGTH_SHORT).show()
-
                     val currentPlayer = vm.players.value!![0]
                     Timber.v("Clicked on $col x $row: $cell of ${vm.playerOrder.values.toList()[position]}. Current player=$currentPlayer")
                     if(currentPlayer == vm.playerOrder.keys.toList()[position]){
