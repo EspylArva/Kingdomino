@@ -39,6 +39,9 @@
     <string name="cancel">Cancel Selection</string>
     <string name="confirm">Play Domino</string>
 
+    <!-- Load Game: Text hints -->
+    <string name="game_uid">Game ID</string>
+
     <!-- Load Game: GameInfo RecyclerView-->
     <string name="creation_date">Created on</string>
     <string name="updated_date">Last Update on</string>
