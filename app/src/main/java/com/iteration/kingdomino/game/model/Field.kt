@@ -2,19 +2,20 @@ package com.iteration.kingdomino.game.model
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.jetbrains.annotations.TestOnly
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.stream.Collectors.toList
 
-//@Entity(foreignKeys = [ForeignKey(entity = Player::class, parentColumns = arrayOf("playerId"), childColumns = arrayOf(), onDelete = ForeignKey.CASCADE)])
-data class Field(val fieldSize: Int) {
-
-    val field : MutableList<MutableList<Tile>> = MutableList(fieldSize*2-1) { MutableList(fieldSize*2-1) { Tile.nullTile() } }
+class Field {
+    private val fieldSize: Int
+    private val maxFieldSize: Int
+    val field : MutableList<MutableList<Tile>>
     private val trimmedField
         get() = field.trimmed()
 
-    val width: Int get() = this.field.size
-    val height: Int get() = this.field[0].size
+    val width: Int get() = this.field[0].size
+    val height: Int get() = this.field.size
 
     /**
      * Map representing the field. The field's [Tile]s are grouped by "domains".
@@ -33,14 +34,31 @@ data class Field(val fieldSize: Int) {
     }
 
     init {
-        // Sets the middle of the field to be a castle.
-        val center = fieldSize-1
-        field[center][center] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
     }
 
-    constructor(argField: MutableList<MutableList<Tile>>) : this(argField.size) {
-        field.clear()
-        field.addAll(argField)
+    constructor(fieldSize: Int) {
+        this.fieldSize = fieldSize
+        maxFieldSize = fieldSize*2-1
+
+        field = MutableList(fieldSize*2-1) { MutableList(fieldSize*2-1) { Tile.nullTile() } }
+        val center = fieldSize-1
+        // Sets the middle of the field to be a castle.
+        field[center][center] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
+
+    }
+    constructor(argField: MutableList<MutableList<Tile>>) {
+        this.fieldSize = argField.size
+        maxFieldSize = fieldSize*2-1
+        field = argField
+
+        Timber.d("Field from argField=$argField:\n${field.mapAsString()}")
+        Timber.d("width=$width, height=$height")
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                Timber.d("addToDomains(x=$x, y=$y)")
+                addToDomains(x, y)
+            }
+        }
     }
 
     /**
@@ -51,17 +69,16 @@ data class Field(val fieldSize: Int) {
      *
      * @return the [Player]'s total score.
      */
-    fun calculateScore() : Int
-    {
+    fun calculateScore() : Int {
         Timber.v("Player's domains=$domains")
-        val score = domains.keys.map { domain ->
-            val crowns = domain.map {
-                val y = it % 10
-                val x = (it - y)/10
-                field[x][y].crown.value
-            }.toList().sum()
-            crowns * domain.size
-        }.toList().sum()
+        val score = domains.keys.sumOf total@{ domain ->
+            val crowns = domain.sumOf {
+                val x = it % 10
+                val y = (it - x) / 10
+                return@sumOf field[y][x].crown.value
+            }
+            return@total crowns * domain.size
+        }
 
         Timber.d("Computing score. score=$score")
         return score
@@ -90,16 +107,16 @@ data class Field(val fieldSize: Int) {
      * @param tile the [Tile] to be added to the field.
      * @param posXY the XY coordinates of the [Tile].
      */
-    private fun addTile(tile : Tile, posXY : Pair<Int, Int>)
+    fun addTile(tile : Tile, posXY : Pair<Int, Int>)
     {
         val x = posXY.first; val y = posXY.second
 
-        if(x < 0 || x > 8){ throw PlayerFieldException("Given x index was $x; should be between 0 and 8") }
-        if(y < 0 || y > 8){ throw PlayerFieldException("Given y index was $y; should be between 0 and 8") }
-        if(!isTileLocationFree(posXY)) throw PlayerFieldException("Tile at $posXY is not free: currently occupied by ${field[x][y]}")
+        if(x < 0 || x > maxFieldSize){ throw PlayerFieldException("Given x index was $x; should be between 0 and $maxFieldSize") }
+        if(y < 0 || y > maxFieldSize){ throw PlayerFieldException("Given y index was $y; should be between 0 and $maxFieldSize") }
+        if(!isTileLocationFree(posXY)) throw PlayerFieldException("Tile at $posXY is not free: currently occupied by ${field[y][x]}")
         if(!isFieldSmallEnough(posXY)) throw PlayerFieldException("Playing tile at $posXY would make it exceed max. size 5x5")
 
-        field[x][y] = tile
+        field[y][x] = tile
         addToDomains(x, y)
 
         Timber.v("Success playing tile $tile at $posXY")
@@ -116,17 +133,17 @@ data class Field(val fieldSize: Int) {
         val neighboursId = getNeighboursPosition(x, y)
         // No similar terrain, means only a castle is nearby
         if(neighboursId.isEmpty()) {
-            val newSet = HashSet<Int>(); newSet.add(x*10 + y)
-            domains[newSet] = field[x][y].type
+            val newSet = HashSet<Int>(); newSet.add(y*10 + x)
+            domains[newSet] = field[y][x].type
         }
         // Similar terrain found, adding to the first domain
         else {
             neighboursId.forEach {
-                domains.filterKeys { key -> key.contains(it) }.forEach { entry -> entry.key.add(x*10 + y) }
+                domains.filterKeys { key -> key.contains(it) }.forEach { entry -> entry.key.add(y*10 + x) }
             }
         }
         // Checking if two domains should be merged
-        val domainsContainingXY = domains.filter { entry -> entry.key.contains(x*10 + y) }
+        val domainsContainingXY = domains.filter { entry -> entry.key.contains(y*10 + x) }
         if(domainsContainingXY.size > 1) {
             for(i in 1 until domainsContainingXY.size) {
                 (domains.keys.find { domain -> domain == domainsContainingXY.keys.elementAt(0) } as HashSet).addAll(domainsContainingXY.keys.elementAt(i))
@@ -138,11 +155,10 @@ data class Field(val fieldSize: Int) {
     fun isFieldSmallEnough(position: Pair<Int, Int>) : Boolean {
         val x = position.first
         val y = position.second
-        val trimmedFuture = field.clone()
-                .addAt(x, y, Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE))
-                .trimmed()
+        val future = field.clone().addAt(x, y, Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE))
+        val trimmedFuture = future.trimmed()
         Timber.v("Checking if the field does not exceed 5x5 even after adding a tile at ${x}x$y: currentSize=${trimmedField.width}x${trimmedField.height}. futureSize=${trimmedFuture.width}x${trimmedFuture.height}")
-        return (trimmedFuture.width < 6) and (trimmedFuture.height < 6)
+        return (trimmedFuture.width < fieldSize) and (trimmedFuture.height < fieldSize)
     }
 
     fun tileHasValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
@@ -156,7 +172,7 @@ data class Field(val fieldSize: Int) {
     fun isTileLocationFree(tileLocation: Pair<Int, Int>) : Boolean {
         val x = tileLocation.first
         val y = tileLocation.second
-        val locationFree = field[x][y].type == Tile.Terrain.NULL
+        val locationFree = field[y][x].type == Tile.Terrain.NULL
         Timber.v("Checking if ${x}x$y cell is free: XYCell.type=${field[x][y].type}. locationFree=$locationFree")
         return locationFree
     }
@@ -187,12 +203,11 @@ data class Field(val fieldSize: Int) {
      */
     private fun getNeighboursPosition(x: Int, y: Int): List<Int> {
         val neighbours = mutableListOf<Int>()
-        if(field[x][y].type != Tile.Terrain.NULL)
-        {
-            if(y > 0 && field[x][y-1].type == field[x][y].type) neighbours.add(x*10+(y-1))
-            if(y < 8 && field[x][y+1].type == field[x][y].type) neighbours.add(x*10+(y+1))
-            if(x > 0 && field[x-1][y].type == field[x][y].type) neighbours.add((x-1)*10+y)
-            if(x < 8 && field[x+1][y].type == field[x][y].type) neighbours.add((x+1)*10+y)
+        if(field[y][x].type != Tile.Terrain.NULL) {
+            if(y > 0 && field[y-1][x].type == field[y][x].type) neighbours.add((y-1)*10+(x))
+            if(y < height-1 && field[y+1][x].type == field[y][x].type) neighbours.add((y+1)*10+(x))
+            if(x > 0 && field[y][x-1].type == field[y][x].type) neighbours.add(y*10+x-1)
+            if(x < width-1 && field[y][x+1].type == field[y][x].type) neighbours.add(y*10+x+1)
         }
         return neighbours
     }
@@ -208,59 +223,19 @@ data class Field(val fieldSize: Int) {
     private fun getNeighboursTypes(x : Int, y : Int) : Set<Tile.Terrain>
     {
         val neighbours = mutableSetOf<Tile.Terrain>()
-        if(y > 0) neighbours.add(field[x][y-1].type)
-        if(y < 8) neighbours.add(field[x][y+1].type)
-        if(x > 0) neighbours.add(field[x-1][y].type)
-        if(x < 8) neighbours.add(field[x+1][y].type)
+        if(y > 0) neighbours.add(field[y-1][x].type)
+        if(y < maxFieldSize) neighbours.add(field[y+1][x].type)
+        if(x > 0) neighbours.add(field[y][x-1].type)
+        if(x < maxFieldSize) neighbours.add(field[y][x+1].type)
 
         return neighbours
     }
 
-    private fun mapAsString(field : MutableList<MutableList<Tile>>) : String
-    {
-        var mapRepresentation = ""
-        for(row in 0 until field.size)
-        {
-            for(col in 0 until field[row].size)
-            {
-                mapRepresentation += field[row][col].type.toString().elementAt(0).uppercaseChar()
-            }
-            mapRepresentation += '\n'
-        }
-        return mapRepresentation
-    }
-
     override fun toString(): String {
-        return mapAsString(trimmedField.field)
+        return field.mapAsString()
     }
 
-    class PlayerFieldException(message : String) : Exception(message) {
-        private val playerFieldExceptionPrefix = "Invalid action: "
-        override val message: String
-            get() = playerFieldExceptionPrefix + super.message
-    }
-
-    private fun MutableList<MutableList<Tile>>.addAt(x: Int, y: Int, tile: Tile) : MutableList<MutableList<Tile>> {
-        this[x][y] = tile
-        return this
-    }
-
-    private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile>> {
-        return this.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
-    }
-
-    private fun MutableList<MutableList<Tile>>.trimmed(): Field {
-        val trimmedField = this.clone()// fieldClone() // clone the field
-        for(i in 8 downTo 0) {
-            if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
-                trimmedField.removeAt(i)
-            }
-            if(this.all { row -> row[i].type == Tile.Terrain.NULL }) {
-                trimmedField.forEach { row -> row.removeAt(i) }
-            }
-        }
-        return Field(trimmedField)
-    }
+    fun clone() : Field = Field(field.clone())
 
     companion object FieldConverter {
         fun fromField(field: Field) : String = Gson().toJson(field.field)
@@ -273,4 +248,35 @@ data class Field(val fieldSize: Int) {
     }
 }
 
+class PlayerFieldException(message : String) : Exception(message) {
+    private val playerFieldExceptionPrefix = "Invalid action: "
+    override val message: String
+        get() = playerFieldExceptionPrefix + super.message
+}
 
+private fun MutableList<MutableList<Tile>>.addAt(x: Int, y: Int, tile: Tile) : MutableList<MutableList<Tile>> {
+    this[y][x] = tile
+    return this
+}
+
+private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile>> {
+    return this.map { it.map {tile -> tile.copy() }.toMutableList()}.toMutableList()
+}
+
+private fun MutableList<MutableList<Tile>>.trimmed(): Field {
+    val trimmedField = this.clone()// fieldClone() // clone the field
+    for(i in 8 downTo 0) {
+        if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
+            trimmedField.removeAt(i)
+        }
+        if(this.all { row -> row[i].type == Tile.Terrain.NULL }) {
+            trimmedField.forEach { row -> row.removeAt(i) }
+        }
+    }
+    return Field(trimmedField)
+}
+
+@TestOnly
+fun MutableList<MutableList<Tile>>.mapAsString() : String = this.joinToString ("\n") {
+    it.joinToString { tile -> "[${tile.type.name.elementAt(0).uppercaseChar()}${tile.crown.value}]" }
+}

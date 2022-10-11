@@ -33,8 +33,8 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
 
     private fun displayPlayerMap(field: MutableList<MutableList<Tile>>, position: Int, holder: ViewHolder) {
         holder.clear()
-        val rows = field.size
-        val columns = field[0].size
+        val columns = field.size
+        val rows = field[0].size
         holder.rowCount = rows
         holder.colCount = columns
 
@@ -42,16 +42,20 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         {
             for(col in 0 until field[row].size)
             {
+                val cell = field[col][row]
+
                 // Get the drawables
-                var typeDrawableId = field[row][col].type.drawableId
+                var typeDrawableId = cell.type.drawableId
                 if(typeDrawableId == 0) { typeDrawableId = Tile.CASTLES[position] }
-                val crownDrawableId = field[row][col].crown.drawableId
+                val crownDrawableId = cell.crown.drawableId
 
                 val clTile = generateTileConstraintLayout(holder, typeDrawableId, crownDrawableId)
                 holder.add(clTile, row, col)
                 clTile.setOnClickListener {
+                    Toast.makeText(holder.itemView.context, "Clicked @$row x $col", Toast.LENGTH_SHORT).show()
+
                     val currentPlayer = vm.players.value!![0]
-                    Timber.v("Clicked on $row x $col: ${field[row][col]} of ${vm.playerOrder.values.toList()[position]}. Current player=$currentPlayer")
+                    Timber.v("Clicked on $col x $row: $cell of ${vm.playerOrder.values.toList()[position]}. Current player=$currentPlayer")
                     if(currentPlayer == vm.playerOrder.keys.toList()[position]){
                         vm.addPosition(row, col)
                     } else {
@@ -141,7 +145,7 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
                 return false
             }
         }
-        return if(vm.playerPickedPositions.value!!.size == 1) true else player.map.isCardLocationValid(positions[0], positions[1], card)
+        return vm.playerPickedPositions.value!!.size == 1 || player.map.isCardLocationValid(positions[0], positions[1], card)
     }
 
     /**
@@ -212,7 +216,6 @@ class PlayerMapAdapter(private val vm : GameViewModel) : RecyclerView.Adapter<Pl
         }
 
         fun clear() = playerMap.removeAllViews()
-
     }
 
 }
