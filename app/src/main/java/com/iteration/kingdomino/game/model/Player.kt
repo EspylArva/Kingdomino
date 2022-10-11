@@ -1,9 +1,9 @@
 package com.iteration.kingdomino.game.model
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import timber.log.Timber
 
-//@Entity
 data class Player(val name : String) : MutableLiveData<Player>() {
 
     constructor(playerData: Player.Data) : this(playerData.name) {
@@ -53,8 +53,12 @@ data class Player(val name : String) : MutableLiveData<Player>() {
             possibleMap.addTile(card.tile2, positions[1])
         }
 
-        Timber.d("Point diff ==> possible (score=${possibleMap.calculateScore()})\n${possibleMap.field.mapAsString()}")
-        Timber.d("Point diff ==> current  (score=${map.calculateScore()})\n${map.field.mapAsString()}")
+        val size = possibleMap.field.size
+        val maps = (0 until size).joinToString("\n") {
+            "${map.field.mapAsString().split("\n")[it]}   ==>   ${possibleMap.field.mapAsString().split("\n")[it]}"
+        }
+
+        Timber.d("Point diff for $name: current=${map.calculateScore()} ==> possible=${possibleMap.calculateScore()})\n$maps")
 
         return possibleMap.calculateScore() - map.calculateScore()
     }

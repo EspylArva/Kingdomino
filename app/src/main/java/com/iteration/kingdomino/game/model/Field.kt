@@ -11,7 +11,7 @@ class Field {
     private val fieldSize: Int
     private val maxFieldSize: Int
     val field : MutableList<MutableList<Tile>>
-    private val trimmedField
+    val trimmedField
         get() = field.trimmed()
 
     val width: Int get() = this.field[0].size
@@ -23,7 +23,7 @@ class Field {
      * Key: Set<Int>        . Set of [Tile] positions within the field. The position is an integer between 0 and 99. Digit of tens represent X coordinate, digit of units represent Y coordinate.
      * Value: Tile.Terrain  . [Tile.Terrain] type of the domain.
      */
-    private var domains = HashMap<MutableSet<Int>, Tile.Terrain>()
+    private var domains : HashMap<MutableSet<Int>, Tile.Terrain>
 
     val domainSize: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.collect(toList()).size
     val crownCount: Int get() = trimmedField.field.stream().flatMap { row -> row.stream() }.filter { it.type != Tile.Terrain.NULL }.mapToInt { it.crown.value }.sum()
@@ -33,23 +33,24 @@ class Field {
         return trimmedField.field[middle][middle].type == Tile.Terrain.CASTLE
     }
 
-    init {
-    }
-
     constructor(fieldSize: Int) {
         this.fieldSize = fieldSize
         maxFieldSize = fieldSize*2-1
+
+        domains = HashMap()
 
         field = MutableList(fieldSize*2-1) { MutableList(fieldSize*2-1) { Tile.nullTile() } }
         val center = fieldSize-1
         // Sets the middle of the field to be a castle.
         field[center][center] = Tile(Tile.Terrain.CASTLE, Tile.Crown.ZERO)
-
     }
-    constructor(argField: MutableList<MutableList<Tile>>) {
+
+    constructor(argField: MutableList<MutableList<Tile>>, maxSize: Int) {
         this.fieldSize = argField.size
-        maxFieldSize = fieldSize*2-1
+        maxFieldSize = maxSize
         field = argField
+
+        domains = HashMap()
 
         Timber.d("Field from argField=$argField:\n${field.mapAsString()}")
         Timber.d("width=$width, height=$height")
@@ -59,6 +60,8 @@ class Field {
                 addToDomains(x, y)
             }
         }
+
+        Timber.d("New domain = $domains\nMap=\n${field.mapAsString()}")
     }
 
     /**
@@ -129,8 +132,17 @@ class Field {
      * @param y the Y coordinate of the tile to add to the map of [domains].
      */
     private fun addToDomains(x: Int, y: Int) {
+        if(field[y][x].type == Tile.Terrain.NULL) {
+            return
+        }
+
+        Timber.d("(1) pos=${x}x$y ==> Domains=$domains")
+
         // Checking which domain to add to...
         val neighboursId = getNeighboursPosition(x, y)
+
+        Timber.d("Neighbours=$neighboursId")
+
         // No similar terrain, means only a castle is nearby
         if(neighboursId.isEmpty()) {
             val newSet = HashSet<Int>(); newSet.add(y*10 + x)
@@ -150,6 +162,7 @@ class Field {
                 domains = domains.filter { entry -> entry.key != domainsContainingXY.keys.elementAt(i) } as HashMap
             }
         }
+        Timber.d("(2) Domains=$domains")
     }
 
     fun isFieldSmallEnough(position: Pair<Int, Int>) : Boolean {
@@ -158,7 +171,7 @@ class Field {
         val future = field.clone().addAt(x, y, Tile(Tile.Terrain.CASTLE, Tile.Crown.THREE))
         val trimmedFuture = future.trimmed()
         Timber.v("Checking if the field does not exceed 5x5 even after adding a tile at ${x}x$y: currentSize=${trimmedField.width}x${trimmedField.height}. futureSize=${trimmedFuture.width}x${trimmedFuture.height}")
-        return (trimmedFuture.width < fieldSize) and (trimmedFuture.height < fieldSize)
+        return (trimmedFuture.width <= fieldSize) and (trimmedFuture.height <= fieldSize)
     }
 
     fun tileHasValidNeighbour(position: Pair<Int, Int>, tile: Tile) : Boolean {
@@ -203,11 +216,14 @@ class Field {
      */
     private fun getNeighboursPosition(x: Int, y: Int): List<Int> {
         val neighbours = mutableListOf<Int>()
-        if(field[y][x].type != Tile.Terrain.NULL) {
-            if(y > 0 && field[y-1][x].type == field[y][x].type) neighbours.add((y-1)*10+(x))
-            if(y < height-1 && field[y+1][x].type == field[y][x].type) neighbours.add((y+1)*10+(x))
-            if(x > 0 && field[y][x-1].type == field[y][x].type) neighbours.add(y*10+x-1)
-            if(x < width-1 && field[y][x+1].type == field[y][x].type) neighbours.add(y*10+x+1)
+        val cellType = field[y][x].type
+
+        Timber.d("Terrain size: $width x $height. maxSize=$maxFieldSize x:y=$x:$y")
+        if(cellType != Tile.Terrain.NULL) {
+            if(y > 0              && field[y-1][x].type == cellType) neighbours.add((y-1)*10+(x))
+            if(y < height-1       && field[y+1][x].type == cellType) neighbours.add((y+1)*10+(x))
+            if(x > 0              && field[y][x-1].type == cellType) neighbours.add(y*10+x-1)
+            if(x < width-1        && field[y][x+1].type == cellType) neighbours.add(y*10+x+1)
         }
         return neighbours
     }
@@ -224,9 +240,9 @@ class Field {
     {
         val neighbours = mutableSetOf<Tile.Terrain>()
         if(y > 0) neighbours.add(field[y-1][x].type)
-        if(y < maxFieldSize) neighbours.add(field[y+1][x].type)
+        if(y < maxFieldSize-2) neighbours.add(field[y+1][x].type)
         if(x > 0) neighbours.add(field[y][x-1].type)
-        if(x < maxFieldSize) neighbours.add(field[y][x+1].type)
+        if(x < maxFieldSize-2) neighbours.add(field[y][x+1].type)
 
         return neighbours
     }
@@ -235,17 +251,7 @@ class Field {
         return field.mapAsString()
     }
 
-    fun clone() : Field = Field(field.clone())
-
-    companion object FieldConverter {
-        fun fromField(field: Field) : String = Gson().toJson(field.field)
-
-        fun fromString(value: String?): Field {
-            val listType: Type = object : TypeToken<MutableList<MutableList<Tile>>>() {}.type
-            val field : MutableList<MutableList<Tile>> = Gson().fromJson(value, listType)
-            return Field(field)
-        }
-    }
+    fun clone() : Field = Field(field.clone(), maxFieldSize)
 }
 
 class PlayerFieldException(message : String) : Exception(message) {
@@ -265,7 +271,8 @@ private fun MutableList<MutableList<Tile>>.clone(): MutableList<MutableList<Tile
 
 private fun MutableList<MutableList<Tile>>.trimmed(): Field {
     val trimmedField = this.clone()// fieldClone() // clone the field
-    for(i in 8 downTo 0) {
+    val maxSize = trimmedField.size
+    for(i in (maxSize-1) downTo 0) {
         if(this[i].all { tile -> tile.type == Tile.Terrain.NULL }) {
             trimmedField.removeAt(i)
         }
@@ -273,10 +280,14 @@ private fun MutableList<MutableList<Tile>>.trimmed(): Field {
             trimmedField.forEach { row -> row.removeAt(i) }
         }
     }
-    return Field(trimmedField)
+    return Field(trimmedField, maxSize)
 }
 
 @TestOnly
 fun MutableList<MutableList<Tile>>.mapAsString() : String = this.joinToString ("\n") {
-    it.joinToString { tile -> "[${tile.type.name.elementAt(0).uppercaseChar()}${tile.crown.value}]" }
+    it.joinToString { tile ->
+        val terrain = if(tile.type == Tile.Terrain.NULL) '-' else tile.type.name.elementAt(0).uppercaseChar()
+        val value = if(tile.type == Tile.Terrain.NULL) '-' else tile.crown.value
+        "[${terrain}${value}]"
+    }
 }
